@@ -2,6 +2,7 @@
 
 import {
   Circumflex,
+  Definition,
   Disjunction,
   Identifier,
   Quote,
@@ -25,6 +26,10 @@ describe("Parsers", () => {
     console.log(result.join(" >> "));
     expect(result).toBeInstanceOf(Array);
     expect(result.length).toBe(9);
+  });
+  test("definition", () => {
+    let result = Parsers.definition.tryParse(`identifier = "foo" | "bar" | "baz" "two" "three";`);
+    expect(result).toBeInstanceOf(Definition);
   });
   test("disjunction: simple 1", () => {
     let result = Parsers.disjunction.tryParse(`"foo" | "bar" | "baz" | literal`);

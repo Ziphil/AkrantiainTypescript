@@ -5,12 +5,12 @@ import {
   Parser,
   alt,
   lazy,
-  seq,
-  seqMap
+  seq
 } from "parsimmon";
 import {
   Akrantiain,
   Circumflex,
+  Definition,
   Disjunction,
   Identifier,
   Matchable,
@@ -98,11 +98,24 @@ export class Parsers {
   public static moduleChainName: Parser<ModuleChainName> = lazy(() => {
     let parser = seq(
       Parsers.identifier,
-      seq(Parsimmon.string("=>").trim(Parsers.blank)),
+      Parsimmon.string("=>").trim(Parsers.blank),
       Parsers.identifier
     ).map(([first, , second]) => {
       let name = [first, second] as ModuleChainName;
       return name;
+    });
+    return parser;
+  });
+
+  public static definition: Parser<Definition> = lazy(() => {
+    let parser = seq(
+      Parsers.identifier,
+      Parsimmon.string("=").trim(Parsers.blank),
+      Parsers.disjunction,
+      seq(Parsers.blank, Parsers.semicolon)
+    ).map(([identifier, , content]) => {
+      let definition = new Definition(identifier, content);
+      return definition;
     });
     return parser;
   });
