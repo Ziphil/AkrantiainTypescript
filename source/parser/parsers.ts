@@ -19,10 +19,12 @@ import {
   ModuleChain,
   ModuleChainName,
   ModuleName,
+  ModuleSimpleName,
   Quote,
   Rule,
   RuleLeft,
   RuleRight,
+  Sentence,
   Sequence,
   Slash
 } from "../class";
@@ -37,78 +39,18 @@ export class Parsers {
     let parser = seq(
       seq(Parsimmon.string("%"), Parsers.blank),
       Parsers.moduleName,
-      seq(Parsers.blank, Parsimmon.string("{"), Parsers.blank),
-      Parsers.moduleContent,
-      seq(Parsers.blank, Parsimmon.string("}"))
-    ).map(([, name, , content]) => {
-      let module = new Module(name, content);
+      seq(Parsers.blankOrBreak, Parsimmon.string("{"), Parsers.blankOrBreak),
+      Parsers.sentence.many(),
+      seq(Parsers.blankOrBreak, Parsimmon.string("}"))
+    ).map(([, name, , sentences]) => {
+      let module = new Module(name, sentences);
       return module;
     });
     return parser;
   });
 
-  public static moduleContent: Parser<ModuleChain> = lazy(() => {
-    let parser = Parsers.moduleChain;
-    return parser;
-  });
-
-  public static moduleChain: Parser<ModuleChain> = lazy(() => {
-    let chainElementParser = alt(Parsers.moduleChainElement, Parsers.moduleChainElement.thru(Parsers.parened));
-    let chainParser = chainElementParser.sepBy1(Parsimmon.string(">>").trim(Parsers.blank)).map((chainElements) => {
-      let chain = [];
-      for (let chainElement of chainElements) {
-        chain.push(...chainElement);
-      }
-      return chain;
-    });
-    let parser = seq(
-      Parsimmon.string("%%"),
-      Parsers.blank,
-      chainParser,
-      seq(Parsers.blank, Parsers.semicolon)
-    ).map(([, , chain]) => {
-      return chain;
-    });
-    return parser;
-  });
-
-  // モジュールチェイン素をパースします。
-  // パースした結果は、推移型モジュールを 1 つずつに分解したモジュール名の配列になります。
-  // 例えば、「A => B => C => D」という文字列は、「A => B」と「B => C」と「C => D」の 3 つのモジュール名からなる配列にパースされます。
-  public static moduleChainElement: Parser<ModuleChain> = lazy(() => {
-    let parser = Parsers.identifier.sepBy1(Parsimmon.string("=>").trim(Parsers.blank)).map((strings) => {
-      if (strings.length === 1) {
-        return [strings[0]];
-      } else {
-        let names = [];
-        for (let i = 0 ; i < strings.length - 1; i ++) {
-          let name = [strings[i], strings[i + 1]] as ModuleChainName;
-          names.push(name);
-        }
-        return names;
-      }
-    });
-    return parser;
-  });
-
-  public static moduleName: Parser<ModuleName> = lazy(() => {
-    let parser = alt(Parsers.moduleChainName.thru(attempt), Parsers.moduleSimpleName);
-    return parser;
-  });
-
-  public static moduleSimpleName: Parser<Identifier> = lazy(() => {
-    return Parsers.identifier;
-  });
-
-  public static moduleChainName: Parser<ModuleChainName> = lazy(() => {
-    let parser = seq(
-      Parsers.identifier,
-      Parsimmon.string("=>").trim(Parsers.blank),
-      Parsers.identifier
-    ).map(([first, , second]) => {
-      let name = [first, second] as ModuleChainName;
-      return name;
-    });
+  public static sentence: Parser<Sentence> = lazy(() => {
+    let parser = alt(Parsers.definition, Parsers.rule, Parsers.moduleChain);
     return parser;
   });
 
@@ -186,6 +128,66 @@ export class Parsers {
   public static selection: Parser<Matchable> = lazy(() => {
     let disjunctionParser = Parsers.disjunction.thru(Parsers.parened);
     let parser = alt(Parsers.quote, Parsers.circumflex, Parsers.identifier, disjunctionParser);
+    return parser;
+  });
+
+  public static moduleChain: Parser<ModuleChain> = lazy(() => {
+    let chainElementParser = alt(Parsers.moduleChainElement, Parsers.moduleChainElement.thru(Parsers.parened));
+    let chainParser = chainElementParser.sepBy1(Parsimmon.string(">>").trim(Parsers.blank)).map((chainElements) => {
+      let chain = [];
+      for (let chainElement of chainElements) {
+        chain.push(...chainElement);
+      }
+      return chain;
+    });
+    let parser = seq(
+      Parsimmon.string("%%"),
+      Parsers.blank,
+      chainParser,
+      seq(Parsers.blank, Parsers.semicolon)
+    ).map(([, , chain]) => {
+      return chain;
+    });
+    return parser;
+  });
+
+  // モジュールチェイン素をパースします。
+  // パースした結果は、推移型モジュールを 1 つずつに分解したモジュール名の配列になります。
+  // 例えば、「A => B => C => D」という文字列は、「A => B」と「B => C」と「C => D」の 3 つのモジュール名からなる配列にパースされます。
+  public static moduleChainElement: Parser<ModuleChain> = lazy(() => {
+    let parser = Parsers.identifier.sepBy1(Parsimmon.string("=>").trim(Parsers.blank)).map((strings) => {
+      if (strings.length === 1) {
+        return [strings[0]];
+      } else {
+        let names = [];
+        for (let i = 0 ; i < strings.length - 1; i ++) {
+          let name = [strings[i], strings[i + 1]] as ModuleChainName;
+          names.push(name);
+        }
+        return names;
+      }
+    });
+    return parser;
+  });
+
+  public static moduleName: Parser<ModuleName> = lazy(() => {
+    let parser = alt(Parsers.moduleChainName.thru(attempt), Parsers.moduleSimpleName);
+    return parser;
+  });
+
+  public static moduleSimpleName: Parser<ModuleSimpleName> = lazy(() => {
+    return Parsers.identifier;
+  });
+
+  public static moduleChainName: Parser<ModuleChainName> = lazy(() => {
+    let parser = seq(
+      Parsers.identifier,
+      Parsimmon.string("=>").trim(Parsers.blank),
+      Parsers.identifier
+    ).map(([first, , second]) => {
+      let name = [first, second] as ModuleChainName;
+      return name;
+    });
     return parser;
   });
 

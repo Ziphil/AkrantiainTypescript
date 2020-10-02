@@ -32,6 +32,7 @@ export class Rule {
     }
     string += " -> ";
     string += this.phonemes.join(" ");
+    string += ";";
     return string;
   }
 

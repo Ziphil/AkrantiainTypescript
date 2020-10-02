@@ -5,6 +5,7 @@ import {
   Definition,
   Disjunction,
   Identifier,
+  Module,
   Quote,
   Rule,
   Sequence,
@@ -16,18 +17,19 @@ import {
 
 
 describe("Parsers", () => {
-  test("module chain: simple", () => {
-    let result = Parsers.moduleChain.tryParse(`%% A >> B >> C;`);
-    expect(result).toBeInstanceOf(Array);
-    expect(result.length).toBe(3);
-    expect(result[1].name).toBe("B");
-    expect(result[2].name).toBe("C");
-  });
-  test("module chain: complex", () => {
-    let result = Parsers.moduleChain.tryParse(`%% A >> (foo => bar => baz) >> B >> no => paren => no => paren >> C >> D;`);
-    console.log(result.join(" >> "));
-    expect(result).toBeInstanceOf(Array);
-    expect(result.length).toBe(9);
+  test("explicit module", () => {
+    let result = Parsers.explicitModule.tryParse(`
+      % foo => bar {
+        def = "a" | "b" "c" | "d";
+        foo = def def | def ("hoge" "fuga" | "piyo") | "mofu"
+        "rule" -> /mofu/; !"before" foo def -> /same/ $
+        other = "other";
+      }
+    `.trim());
+    console.log(result.toString());
+    expect(result).toBeInstanceOf(Module);
+    expect(result.definitions.length).toBe(3);
+    expect(result.rules.length).toBe(2);
   });
   test("definition", () => {
     let result = Parsers.definition.tryParse(`identifier = "foo" | "bar" | "baz" "two" "three";`);
@@ -75,5 +77,18 @@ describe("Parsers", () => {
     let result = Parsers.disjunction.tryParse(`"string" (nest | nest ^ (nest) (nest | nest)) (nest nest) | "right"`);
     console.log(result.toString());
     expect(result).toBeInstanceOf(Disjunction);
+  });
+  test("module chain: simple", () => {
+    let result = Parsers.moduleChain.tryParse(`%% A >> B >> C;`);
+    expect(result).toBeInstanceOf(Array);
+    expect(result.length).toBe(3);
+    expect(result[1].name).toBe("B");
+    expect(result[2].name).toBe("C");
+  });
+  test("module chain: complex", () => {
+    let result = Parsers.moduleChain.tryParse(`%% A >> (foo => bar => baz) >> B >> no => paren => no => paren >> C >> D;`);
+    console.log(result.join(" >> "));
+    expect(result).toBeInstanceOf(Array);
+    expect(result.length).toBe(9);
   });
 });
