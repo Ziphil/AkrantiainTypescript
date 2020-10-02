@@ -1,5 +1,9 @@
 //
 
+import {
+  Identifier
+} from ".";
+
 
 export class Module {
 
@@ -23,5 +27,6 @@ export class Module {
 }
 
 
-export type ModuleName = string | [string, string];
+export type ModuleName = Identifier | ModuleChainName;
+export type ModuleChainName = [Identifier, Identifier];
 export type ModuleChain = Array<ModuleName>;

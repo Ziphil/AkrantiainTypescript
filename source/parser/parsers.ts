@@ -10,8 +10,10 @@ import {
 } from "parsimmon";
 import {
   Akrantiain,
+  Identifier,
   Module,
   ModuleChain,
+  ModuleChainName,
   ModuleName
 } from "../class";
 import {
@@ -58,7 +60,7 @@ export class Parsers {
 
   // モジュールチェイン素をパースします。
   // パースした結果は、推移型モジュールを 1 つずつに分解したモジュール名の配列になります。
-  // 例えば、「A => B => C => D」という文字列は、「A => B」「B => C」「C => D」の 3 つのモジュール名からなる配列にパースされます。
+  // 例えば、「A => B => C => D」という文字列は、「A => B」と「B => C」と「C => D」の 3 つのモジュール名からなる配列にパースされます。
   public static moduleChainElement: Parser<ModuleChain> = lazy(() => {
     let innerParser = Parsers.identifier.sepBy1(Parsimmon.string("=>").trim(Parsers.blank));
     let parenedParser = innerParser.thru(between("(", ")"));
@@ -68,7 +70,7 @@ export class Parsers {
       } else {
         let names = [];
         for (let i = 0 ; i < strings.length - 1; i ++) {
-          let name = [strings[i], strings[i + 1]] as [string, string];
+          let name = [strings[i], strings[i + 1]] as ModuleChainName;
           names.push(name);
         }
         return names;
@@ -82,25 +84,25 @@ export class Parsers {
     return parser;
   });
 
-  public static moduleSimpleName: Parser<string> = lazy(() => {
+  public static moduleSimpleName: Parser<Identifier> = lazy(() => {
     return Parsers.identifier;
   });
 
-  public static moduleChainName: Parser<[string, string]> = lazy(() => {
+  public static moduleChainName: Parser<ModuleChainName> = lazy(() => {
     let parser = seqMap(
       Parsers.identifier,
       seq(Parsimmon.string("=>").trim(Parsers.blank)),
       Parsers.identifier,
       (...results) => {
-        let name = [results[0], results[2]] as [string, string];
+        let name = [results[0], results[2]] as ModuleChainName;
         return name;
       }
     );
     return parser;
   });
 
-  public static identifier: Parser<string> = lazy(() => {
-    let parser = Parsimmon.regexp(/[a-zA-Z][a-zA-Z0-9_]*/);
+  public static identifier: Parser<Identifier> = lazy(() => {
+    let parser = Parsimmon.regexp(/[a-zA-Z][a-zA-Z0-9_]*/).map((result) => new Identifier(result));
     return parser;
   });
 
