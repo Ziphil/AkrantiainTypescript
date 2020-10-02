@@ -13,6 +13,7 @@ import {
   Definition,
   Disjunction,
   Dollar,
+  Environment,
   Identifier,
   Matchable,
   Module,
@@ -47,7 +48,7 @@ export class Parsers {
   });
 
   public static sentence: Parser<Sentence> = lazy(() => {
-    let parser = alt(Parsers.definition, Parsers.rule, Parsers.moduleChain);
+    let parser = alt(Parsers.definition, Parsers.rule, Parsers.environment, Parsers.moduleChain);
     return parser;
   });
 
@@ -110,6 +111,15 @@ export class Parsers {
   public static selection: Parser<Matchable> = lazy(() => {
     let disjunctionParser = Parsers.disjunction.thru(Parsers.parened);
     let parser = alt(Parsers.quote, Parsers.circumflex, Parsers.identifier, disjunctionParser);
+    return parser;
+  });
+
+  public static environment: Parser<Environment> = lazy(() => {
+    let parser = seq(
+      Parsimmon.string("@"),
+      Parsers.identifier.map((identifier) => identifier.name),
+      seq(Parsers.blank, Parsers.semicolon)
+    ).map(([, name]) => new Environment(name));
     return parser;
   });
 

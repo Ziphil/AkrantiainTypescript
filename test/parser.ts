@@ -22,8 +22,10 @@ describe("Parsers", () => {
       % foo => bar {
         def = "a" | "b" "c" | "d";
         foo = def def | def ("hoge" "fuga" | "piyo") | "mofu"
+        @FallThru;
         "rule" -> /mofu/; !"before" foo def -> /same/ $
         other = "other";
+        @use_NFD
       }
     `.trim());
     console.log(result.toString());
