@@ -6,7 +6,9 @@ import {
   Disjunction,
   Identifier,
   Quote,
-  Sequence
+  Rule,
+  Sequence,
+  Slash
 } from "../source/class";
 import {
   Parsers
@@ -30,6 +32,25 @@ describe("Parsers", () => {
   test("definition", () => {
     let result = Parsers.definition.tryParse(`identifier = "foo" | "bar" | "baz" "two" "three";`);
     expect(result).toBeInstanceOf(Definition);
+  });
+  test("rule: simple 1", () => {
+    let result = Parsers.rule.tryParse(`"u" "g" !vowel -> /u/ /w/;`);
+    expect(result).toBeInstanceOf(Rule);
+    expect(result.selections.length).toBe(2);
+    expect(result.leftCondition).toBe(undefined);
+    expect(result.rightCondition).toBeInstanceOf(Disjunction);
+    expect(result.phonemes.length).toBe(2);
+    expect(result.phonemes[1]).toBeInstanceOf(Slash);
+    expect(result.phonemes[1].string).toBe("w");
+  });
+  test("rule: simple 2", () => {
+    let result = Parsers.rule.tryParse(`"n" ^ ("m"|"p") -> /m/ $;`);
+    expect(result).toBeInstanceOf(Rule);
+  });
+  test("rule: complex", () => {
+    let result = Parsers.rule.tryParse(`!left some ^ ("com" pl | "ex") exam "ple" ^ !("r" | "i" "\\"g\\""| ht) -> /m/ $ /3/ /4/ /\\/5\\// $;`);
+    console.log(result.toString());
+    expect(result).toBeInstanceOf(Rule);
   });
   test("disjunction: simple 1", () => {
     let result = Parsers.disjunction.tryParse(`"foo" | "bar" | "baz" | literal`);

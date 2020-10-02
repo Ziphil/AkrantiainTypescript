@@ -12,6 +12,7 @@ import {
   Circumflex,
   Definition,
   Disjunction,
+  Dollar,
   Identifier,
   Matchable,
   Module,
@@ -19,7 +20,11 @@ import {
   ModuleChainName,
   ModuleName,
   Quote,
-  Sequence
+  Rule,
+  RuleLeft,
+  RuleRight,
+  Sequence,
+  Slash
 } from "../class";
 import {
   attempt
@@ -120,6 +125,42 @@ export class Parsers {
     return parser;
   });
 
+  public static rule: Parser<Rule> = lazy(() => {
+    let parser = seq(
+      Parsers.ruleLeft,
+      Parsimmon.string("->").trim(Parsers.blank),
+      Parsers.ruleRight,
+      seq(Parsers.blank, Parsers.semicolon)
+    ).map(([ruleLeft, , ruleRight]) => {
+      let selections = ruleLeft.selections;
+      let leftCondition = ruleLeft.leftCondition;
+      let rightCondition = ruleLeft.rightCondition;
+      let rule = new Rule(selections, leftCondition, rightCondition, ruleRight);
+      return rule;
+    });
+    return parser;
+  });
+
+  public static ruleLeft: Parser<RuleLeft> = lazy(() => {
+    let parser = seq(
+      Parsers.condition.times(0, 1).map((result) => result[0]),
+      Parsers.blank,
+      Parsers.selection.sepBy1(Parsers.blank),
+      Parsers.blank,
+      Parsers.condition.times(0, 1).map((result) => result[0])
+    ).map(([leftCondition, , selections, , rightCondition]) => {
+      let ruleLeft = {selections, leftCondition, rightCondition};
+      return ruleLeft;
+    });
+    return parser;
+  });
+
+  public static ruleRight: Parser<RuleRight> = lazy(() => {
+    let elementParser = alt(Parsers.slash, Parsers.dollar);
+    let parser = elementParser.sepBy1(Parsers.blank);
+    return parser;
+  });
+
   public static disjunction: Parser<Disjunction> = lazy(() => {
     let parser = Parsers.sequence.sepBy1(Parsimmon.string("|").trim(Parsers.blank)).map((sequences) => new Disjunction(sequences, false));
     return parser;
@@ -130,7 +171,7 @@ export class Parsers {
     return parser;
   });
 
-  public static condition: Parser<unknown> = lazy(() => {
+  public static condition: Parser<Matchable> = lazy(() => {
     let parser = seq(
       Parsimmon.string("!"),
       Parsers.blank,
@@ -181,8 +222,46 @@ export class Parsers {
     return parser;
   });
 
+  public static slash: Parser<Slash> = lazy(() => {
+    let parser = seq(
+      Parsimmon.string("/"),
+      alt(Parsers.slashEscape, Parsers.slashContent).many().tie(),
+      Parsimmon.string("/")
+    ).map(([, string]) => {
+      let slash = new Slash(string);
+      return slash;
+    });
+    return parser;
+  });
+
+  public static slashEscape: Parser<string> = lazy(() => {
+    let parser = seq(
+      Parsimmon.string("\\"),
+      alt(Parsimmon.regexp(/u[A-Fa-f0-9]{4}/), Parsimmon.oneOf("\\/"))
+    ).map(([, escape]) => {
+      if (escape.startsWith("u")) {
+        let code = parseInt(escape.substr(1, 4), 16);
+        let char = String.fromCharCode(code);
+        return char;
+      } else {
+        return escape;
+      }
+    });
+    return parser;
+  });
+
+  public static slashContent: Parser<string> = lazy(() => {
+    let parser = Parsimmon.noneOf("\\/");
+    return parser;
+  });
+
   public static circumflex: Parser<Circumflex> = lazy(() => {
     let parser = Parsimmon.string("^").result(new Circumflex());
+    return parser;
+  });
+
+  public static dollar: Parser<Dollar> = lazy(() => {
+    let parser = Parsimmon.string("$").result(new Dollar());
     return parser;
   });
 

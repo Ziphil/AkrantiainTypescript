@@ -30,6 +30,21 @@ export class Quote implements Matchable {
 }
 
 
+export class Slash {
+
+  public string: string;
+
+  public constructor(string: string) {
+    this.string = string;
+  }
+
+  public toString(): string {
+    return `/${this.string}/`;
+  }
+
+}
+
+
 export class Identifier implements Matchable {
 
   public name: string;
@@ -65,6 +80,15 @@ export class Circumflex implements Matchable {
 
   public toString(): string {
     return "^";
+  }
+
+}
+
+
+export class Dollar {
+
+  public toString(): string {
+    return "$";
   }
 
 }
