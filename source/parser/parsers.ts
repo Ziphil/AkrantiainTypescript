@@ -10,11 +10,14 @@ import {
 } from "parsimmon";
 import {
   Akrantiain,
+  Circumflex,
   Identifier,
+  Matchable,
   Module,
   ModuleChain,
   ModuleChainName,
-  ModuleName
+  ModuleName,
+  Quote
 } from "../class";
 import {
   attempt,
@@ -25,19 +28,16 @@ import {
 export class Parsers {
 
   public static explicitModule: Parser<Module> = lazy(() => {
-    let parser = seqMap(
+    let parser = seq(
       seq(Parsimmon.string("%"), Parsers.blank),
       Parsers.moduleName,
       seq(Parsers.blank, Parsimmon.string("{"), Parsers.blank),
       Parsers.moduleContent,
-      seq(Parsers.blank, Parsimmon.string("}")),
-      (...results) => {
-        let name = results[1];
-        let content = results[3];
-        let module = new Module(name, content);
-        return module;
-      }
-    );
+      seq(Parsers.blank, Parsimmon.string("}"))
+    ).map(([, name, , content]) => {
+      let module = new Module(name, content);
+      return module;
+    });
     return parser;
   });
 
@@ -47,9 +47,9 @@ export class Parsers {
   });
 
   public static moduleChain: Parser<ModuleChain> = lazy(() => {
-    let chainParser = Parsers.moduleChainElement.sepBy1(Parsimmon.string(">>").trim(Parsers.blank)).map((results) => {
+    let chainParser = Parsers.moduleChainElement.sepBy1(Parsimmon.string(">>").trim(Parsers.blank)).map((chainElements) => {
       let chain = [];
-      for (let chainElement of results) {
+      for (let chainElement of chainElements) {
         chain.push(...chainElement);
       }
       return chain;
@@ -89,20 +89,57 @@ export class Parsers {
   });
 
   public static moduleChainName: Parser<ModuleChainName> = lazy(() => {
-    let parser = seqMap(
+    let parser = seq(
       Parsers.identifier,
       seq(Parsimmon.string("=>").trim(Parsers.blank)),
-      Parsers.identifier,
-      (...results) => {
-        let name = [results[0], results[2]] as ModuleChainName;
-        return name;
+      Parsers.identifier
+    ).map(([first, , second]) => {
+      let name = [first, second] as ModuleChainName;
+      return name;
+    });
+    return parser;
+  });
+
+  public static quote: Parser<Quote> = lazy(() => {
+    let parser = seq(
+      Parsimmon.string("\""),
+      alt(Parsers.quoteEscape, Parsers.quoteContent).many().tie(),
+      Parsimmon.string("\"")
+    ).map(([, string]) => {
+      let quote = new Quote(string);
+      return quote;
+    });
+    return parser;
+  });
+
+  public static quoteEscape: Parser<string> = lazy(() => {
+    let parser = seq(
+      Parsimmon.string("\\"),
+      alt(Parsimmon.regexp(/u[A-Fa-f0-9]{4}/), Parsimmon.oneOf("\\\""))
+    ).map(([, escape]) => {
+      if (escape.startsWith("u")) {
+        let code = parseInt(escape.substr(1, 4), 16);
+        let char = String.fromCharCode(code);
+        return char;
+      } else {
+        return escape;
       }
-    );
+    });
+    return parser;
+  });
+
+  public static quoteContent: Parser<string> = lazy(() => {
+    let parser = Parsimmon.noneOf("\\\"");
+    return parser;
+  });
+
+  public static circumflex: Parser<Circumflex> = lazy(() => {
+    let parser = Parsimmon.string("^").result(new Circumflex());
     return parser;
   });
 
   public static identifier: Parser<Identifier> = lazy(() => {
-    let parser = Parsimmon.regexp(/[a-zA-Z][a-zA-Z0-9_]*/).map((result) => new Identifier(result));
+    let parser = Parsimmon.regexp(/[a-zA-Z][a-zA-Z0-9_]*/).map((string) => new Identifier(string));
     return parser;
   });
 

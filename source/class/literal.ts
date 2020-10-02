@@ -51,3 +51,20 @@ export class Identifier implements Matchable {
   }
 
 }
+
+
+export class Circumflex implements Matchable {
+
+  public matchRight(stat: Stat, from: number, module: Module): number {
+    return -1;
+  }
+
+  public matchLeft(stat: Stat, to: number, module: Module): number {
+    return -1;
+  }
+
+  public toString(): string {
+    return "^";
+  }
+
+}
