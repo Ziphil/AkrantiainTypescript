@@ -12,7 +12,7 @@ export class Disjunction implements Matchable {
   public matchables: Array<Matchable>;
   public negated: boolean;
 
-  public constructor(matchables: Array<Matchable>, negated: boolean) {
+  public constructor(matchables: Array<Matchable>, negated: boolean = false) {
     this.matchables = matchables;
     this.negated = negated;
   }

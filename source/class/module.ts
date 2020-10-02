@@ -2,8 +2,11 @@
 
 import {
   Definition,
+  Disjunction,
   Environment,
+  EnvironmentName,
   Identifier,
+  Matchable,
   ModuleChain,
   Rule
 } from ".";
@@ -14,7 +17,7 @@ export class Module {
   public name: ModuleName | null;
   private definitions: Array<Definition> = [];
   private rules: Array<Rule> = [];
-  private environments: Set<Environment> = new Set();
+  private environments: Array<Environment> = [];
   private moduleChain?: ModuleChain;
 
   public constructor(name: ModuleName | null, sentences: Array<Sentence>) {
@@ -25,13 +28,26 @@ export class Module {
       } else if (sentence instanceof Rule) {
         this.rules.push(sentence);
       } else if (sentence instanceof Environment) {
-        this.environments.add(sentence);
+        this.environments.push(sentence);
       } else if (sentence instanceof ModuleChain) {
         this.moduleChain = sentence;
       } else {
         throw new Error("this cannot happen");
       }
     }
+  }
+
+  public findPunctuationContent(): Matchable {
+    for (let definition of this.definitions) {
+      if (definition.identifier.name === "PUNCTUATION") {
+        return definition.content;
+      }
+    }
+    return new Disjunction([]);
+  }
+
+  public hasEnvironment(name: EnvironmentName): boolean {
+    return this.environments.findIndex((environment) => environment.name === name) >= 0;
   }
 
   public toString(indent: number = 0): string {
@@ -49,7 +65,7 @@ export class Module {
         string += " ".repeat(indent + 4) + `${rule}\n`;
       });
     }
-    if (this.environments.size > 0) {
+    if (this.environments.length > 0) {
       string += " ".repeat(indent + 2) + "environments:\n";
       this.environments.forEach((environment) => {
         string += " ".repeat(indent + 4) + `${environment}\n`;

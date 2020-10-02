@@ -13,6 +13,8 @@ export class Environment {
     let upperRawName = rawName.toUpperCase();
     if (upperRawName === "CASE_SENSITIVE") {
       this.name = "CASE_SENSITIVE";
+    } else if (upperRawName === "PRESERVE_CASE") {
+      this.name = "PRESERVE_CASE";
     } else if (upperRawName.match(/^FALL_?(THROUGH|THRU)$/)) {
       this.name = "FALL_THROUGH";
     } else if (upperRawName === "USE_NFD") {
@@ -31,4 +33,4 @@ export class Environment {
 }
 
 
-export type EnvironmentName = "CASE_SENSITIVE" | "FALL_THROUGH" | "USE_NFD";
+export type EnvironmentName = "CASE_SENSITIVE" | "PRESERVE_CASE" | "FALL_THROUGH" | "USE_NFD";

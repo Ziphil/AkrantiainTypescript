@@ -3,6 +3,6 @@
 
 export class StatElement {
 
-  public string: string = "";
+  public part: string = "";
 
 }
