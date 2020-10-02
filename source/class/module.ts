@@ -35,7 +35,7 @@ export class Module {
 
   public toString(indent: number = 0): string {
     let string = "";
-    string += " ".repeat(indent) + `% ${this.name} {\n`;
+    string += " ".repeat(indent) + `% ${this.name ?? "<implicit>"} {\n`;
     if (this.definitions.length > 0) {
       string += " ".repeat(indent + 2) + "definitions:\n";
       this.definitions.forEach((definition) => {
