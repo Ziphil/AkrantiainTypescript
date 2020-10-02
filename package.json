@@ -10,11 +10,8 @@
     "test:watch": "jest --watch"
   },
   "jest": {
-    "roots": [
-      "test"
-    ],
     "testMatch": [
-      "**/*.(ts|js)"
+      "**/test/**/*.(ts|js)"
     ],
     "transform": {
       "^.+\\.(ts|tsx)$": "ts-jest"
