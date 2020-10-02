@@ -89,7 +89,7 @@ export class Parsers {
   public static moduleChainName: Parser<[string, string]> = lazy(() => {
     let parser = seqMap(
       Parsers.identifier,
-      seq(Parsers.blank, Parsimmon.string("=>"), Parsers.blank),
+      seq(Parsimmon.string("=>").trim(Parsers.blank)),
       Parsers.identifier,
       (...results) => {
         let name = [results[0], results[2]] as [string, string];
