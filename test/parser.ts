@@ -25,7 +25,7 @@ describe("Parsers", () => {
         @FallThru;
         "rule" -> /mofu/; !"before" foo def -> /same/ $
         other = "other";
-        @use_NFDs
+        @use_NFD
       }
     `.trim());
     console.log(result.toString());

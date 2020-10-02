@@ -1,5 +1,9 @@
 //
 
+import {
+  AkrantiainError
+} from ".";
+
 
 export class Environment {
 
@@ -14,7 +18,7 @@ export class Environment {
     } else if (upperRawName === "USE_NFD") {
       this.name = "USE_NFD";
     } else {
-      throw new Error("invalid environment name");
+      throw new AkrantiainError(2435, 2001, "invalid environment name");
     }
   }
 

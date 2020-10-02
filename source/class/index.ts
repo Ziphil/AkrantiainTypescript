@@ -1,5 +1,6 @@
 //
 
+export * from "./akrantiain-error";
 export * from "./akrantiain";
 export * from "./definition";
 export * from "./disjunction";
