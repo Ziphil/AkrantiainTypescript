@@ -25,7 +25,7 @@ export class Sequence implements Matchable {
 
   public toString(): string {
     let string = "";
-    string += `(${this.matchables.join(" | ")})`;
+    string += this.matchables.join(" ");
     return string;
   }
 

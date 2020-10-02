@@ -11,17 +11,18 @@ import {
 import {
   Akrantiain,
   Circumflex,
+  Disjunction,
   Identifier,
   Matchable,
   Module,
   ModuleChain,
   ModuleChainName,
   ModuleName,
-  Quote
+  Quote,
+  Sequence
 } from "../class";
 import {
-  attempt,
-  between
+  attempt
 } from "./util";
 
 
@@ -63,7 +64,7 @@ export class Parsers {
   // 例えば、「A => B => C => D」という文字列は、「A => B」と「B => C」と「C => D」の 3 つのモジュール名からなる配列にパースされます。
   public static moduleChainElement: Parser<ModuleChain> = lazy(() => {
     let innerParser = Parsers.identifier.sepBy1(Parsimmon.string("=>").trim(Parsers.blank));
-    let parenedParser = innerParser.thru(between("(", ")"));
+    let parenedParser = innerParser.thru(Parsers.parened);
     let parser = alt(parenedParser, innerParser).map((strings) => {
       if (strings.length === 1) {
         return [strings[0]];
@@ -97,6 +98,34 @@ export class Parsers {
       let name = [first, second] as ModuleChainName;
       return name;
     });
+    return parser;
+  });
+
+  public static disjunction: Parser<Disjunction> = lazy(() => {
+    let parser = Parsers.sequence.sepBy1(Parsimmon.string("|").trim(Parsers.blank)).map((sequences) => new Disjunction(sequences, false));
+    return parser;
+  });
+
+  public static sequence: Parser<Sequence> = lazy(() => {
+    let parser = Parsers.selection.sepBy1(Parsers.blank).map((selections) => new Sequence(selections));
+    return parser;
+  });
+
+  public static condition: Parser<unknown> = lazy(() => {
+    let parser = seq(
+      Parsimmon.string("!"),
+      Parsers.blank,
+      Parsers.selection
+    ).map(([, , selection]) => {
+      let condition = new Disjunction([selection], true);
+      return condition;
+    });
+    return parser;
+  });
+
+  public static selection: Parser<Matchable> = lazy(() => {
+    let disjunctionParser = Parsers.disjunction.thru(Parsers.parened);
+    let parser = alt(Parsers.quote, Parsers.circumflex, Parsers.identifier, disjunctionParser);
     return parser;
   });
 
@@ -147,5 +176,12 @@ export class Parsers {
     let parser = Parsimmon.regexp(/[^\S\n]*/).result(null);
     return parser;
   });
+
+  private static parened<T>(parser: Parser<T>): Parser<T> {
+    let leftParser = seq(Parsimmon.string("("), Parsers.blank);
+    let rightParser = seq(Parsers.blank, Parsimmon.string(")"));
+    let wrappedParser = seq(leftParser, parser, rightParser).map((result) => result[1]);
+    return wrappedParser;
+  }
 
 }
