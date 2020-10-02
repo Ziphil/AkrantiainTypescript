@@ -10,13 +10,13 @@ import {
 
 export class Module {
 
-  private name: ModuleName;
+  public name: ModuleName | null;
   private definitions: Array<Definition> = [];
   private rules: Array<Rule> = [];
   private environments: Set<Environment> = new Set();
   private moduleChain?: Array<ModuleName>;
 
-  public constructor(name: ModuleName, sentences: Array<Sentence>) {
+  public constructor(name: ModuleName | null, sentences: Array<Sentence>) {
     this.name = name;
     for (let sentence of sentences) {
       if (sentence instanceof Definition) {

@@ -7,12 +7,17 @@ import {
 
 export class Akrantiain {
 
-  private implicitModule: Module;
-  private explicitModules: Array<Module>;
+  private implicitModule!: Module;
+  private explicitModules: Array<Module> = [];
 
-  public constructor(implicitModule: Module, explicitModules: Array<Module>) {
-    this.implicitModule = implicitModule;
-    this.explicitModules = explicitModules;
+  public constructor(modules: Array<Module>) {
+    modules.forEach((module) => {
+      if (module.name === null) {
+        this.implicitModule = module;
+      } else {
+        this.explicitModules.push(module);
+      }
+    });
   }
 
   public toString(indent: number = 0): string {

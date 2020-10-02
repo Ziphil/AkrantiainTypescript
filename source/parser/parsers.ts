@@ -36,6 +36,20 @@ import {
 
 export class Parsers {
 
+  public static akrantiain: Parser<Akrantiain> = lazy(() => {
+    let parser = seq(
+      Parsers.blankOrBreak,
+      alt(Parsers.implicitModule, Parsers.explicitModule).sepBy(Parsers.blankOrBreak),
+      Parsers.blankOrBreak
+    ).map(([, modules]) => new Akrantiain(modules));
+    return parser;
+  });
+
+  public static implicitModule: Parser<Module> = lazy(() => {
+    let parser = Parsers.sentence.atLeast(1).map((sentences) => new Module(null, sentences));
+    return parser;
+  });
+
   public static explicitModule: Parser<Module> = lazy(() => {
     let parser = seq(
       seq(Parsimmon.string("%"), Parsers.blank),

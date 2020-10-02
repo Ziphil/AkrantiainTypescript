@@ -1,11 +1,11 @@
 // @ts-nocheck
 
 import {
+  Akrantiain,
   Circumflex,
   Definition,
   Disjunction,
   Identifier,
-  Module,
   Quote,
   Rule,
   Sequence,
@@ -17,8 +17,8 @@ import {
 
 
 describe("Parsers", () => {
-  test("explicit module", () => {
-    let result = Parsers.explicitModule.tryParse(`
+  test("akrantiain", () => {
+    let result = Parsers.akrantiain.tryParse(`
       % foo => bar {
         def = "a" | "b" "c" | "d";
         foo = def def | def ("hoge" "fuga" | "piyo") | "mofu"
@@ -27,11 +27,17 @@ describe("Parsers", () => {
         other = "other";
         @use_NFD
       }
+      % neko {
+        mochi = "m" "o" | "c" "h" "i"
+        !"a" mochi !("a" | "b") -> /x/;
+      }
+      %% foo => bar >> neko;
     `.trim());
     console.log(result.toString());
-    expect(result).toBeInstanceOf(Module);
-    expect(result.definitions.length).toBe(3);
-    expect(result.rules.length).toBe(2);
+    expect(result).toBeInstanceOf(Akrantiain);
+    expect(result.explicitModules.length).toBe(2);
+    expect(result.explicitModules[0].definitions.length).toBe(3);
+    expect(result.explicitModules[0].rules.length).toBe(2);
   });
   test("definition", () => {
     let result = Parsers.definition.tryParse(`identifier = "foo" | "bar" | "baz" "two" "three";`);
