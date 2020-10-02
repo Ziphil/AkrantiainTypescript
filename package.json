@@ -5,10 +5,27 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "develop": "ts-node source/index.ts"
+    "develop": "ts-node source/index.ts",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "jest": {
+    "roots": [
+      "test"
+    ],
+    "testMatch": [
+      "**/*.(ts|js)"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "ts-jest"
+    },
+    "verbose": true
   },
   "devDependencies": {
+    "@types/jest": "^26.0.14",
     "@types/parsimmon": "^1.10.3",
+    "jest": "^26.4.2",
+    "ts-jest": "^26.4.1",
     "ts-node": "^9.0.0",
     "ts-node-dev": "^1.0.0-pre.63",
     "tslint": "^6.1.3",
