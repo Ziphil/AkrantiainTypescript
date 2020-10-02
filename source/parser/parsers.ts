@@ -48,14 +48,22 @@ export class Parsers {
   });
 
   public static moduleChain: Parser<ModuleChain> = lazy(() => {
-    let chainParser = Parsers.moduleChainElement.sepBy1(Parsimmon.string(">>").trim(Parsers.blank)).map((chainElements) => {
+    let chainElementParser = alt(Parsers.moduleChainElement, Parsers.moduleChainElement.thru(Parsers.parened));
+    let chainParser = chainElementParser.sepBy1(Parsimmon.string(">>").trim(Parsers.blank)).map((chainElements) => {
       let chain = [];
       for (let chainElement of chainElements) {
         chain.push(...chainElement);
       }
       return chain;
     });
-    let parser = seq(Parsimmon.string("%%"), Parsers.blank, chainParser).map((results) => results[2]);
+    let parser = seq(
+      Parsimmon.string("%%"),
+      Parsers.blank,
+      chainParser,
+      seq(Parsers.blank, Parsers.semicolon)
+    ).map(([, , chain]) => {
+      return chain;
+    });
     return parser;
   });
 
@@ -63,9 +71,7 @@ export class Parsers {
   // パースした結果は、推移型モジュールを 1 つずつに分解したモジュール名の配列になります。
   // 例えば、「A => B => C => D」という文字列は、「A => B」と「B => C」と「C => D」の 3 つのモジュール名からなる配列にパースされます。
   public static moduleChainElement: Parser<ModuleChain> = lazy(() => {
-    let innerParser = Parsers.identifier.sepBy1(Parsimmon.string("=>").trim(Parsers.blank));
-    let parenedParser = innerParser.thru(Parsers.parened);
-    let parser = alt(parenedParser, innerParser).map((strings) => {
+    let parser = Parsers.identifier.sepBy1(Parsimmon.string("=>").trim(Parsers.blank)).map((strings) => {
       if (strings.length === 1) {
         return [strings[0]];
       } else {
@@ -167,13 +173,31 @@ export class Parsers {
     return parser;
   });
 
+  // 文末の (省略されているかもしれない) セミコロンおよびその後の (改行を含む) スペースをパースします。
+  public static semicolon: Parser<null> = lazy(() => {
+    let semicolonParser = seq(Parsimmon.string(";"), Parsers.blankOrBreak);
+    let breakParser = seq(Parsers.break, Parsers.blankOrBreak);
+    let parser = alt(semicolonParser, breakParser).result(null);
+    return parser;
+  });
+
   public static identifier: Parser<Identifier> = lazy(() => {
     let parser = Parsimmon.regexp(/[a-zA-Z][a-zA-Z0-9_]*/).map((string) => new Identifier(string));
     return parser;
   });
 
+  public static blankOrBreak: Parser<null> = lazy(() => {
+    let parser = Parsimmon.regexp(/\s*/).result(null);
+    return parser;
+  });
+
   public static blank: Parser<null> = lazy(() => {
     let parser = Parsimmon.regexp(/[^\S\n]*/).result(null);
+    return parser;
+  });
+
+  public static break: Parser<null> = lazy(() => {
+    let parser = Parsimmon.string("\n").result(null);
     return parser;
   });
 
