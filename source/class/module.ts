@@ -65,9 +65,8 @@ export class Module {
 }
 
 
-export type ModuleName = ModuleSimpleName | ModuleChainName;
 export type ModuleSimpleName = Identifier;
 export type ModuleChainName = [Identifier, Identifier];
+export type ModuleName = ModuleSimpleName | ModuleChainName;
 export type ModuleChain = Array<ModuleName>;
-
 export type Sentence = Definition | Rule | Environment | ModuleChain;
