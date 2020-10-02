@@ -52,7 +52,7 @@ describe("Parsers", () => {
     expect(result.rightCondition).toBeInstanceOf(Disjunction);
     expect(result.phonemes.length).toBe(2);
     expect(result.phonemes[1]).toBeInstanceOf(Slash);
-    expect(result.phonemes[1].string).toBe("w");
+    expect(result.phonemes[1].text).toBe("w");
   });
   test("rule: simple 2", () => {
     let result = Parsers.rule.tryParse(`"n" ^ ("m"|"p") -> /m/ $;`);
