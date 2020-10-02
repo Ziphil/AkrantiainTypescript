@@ -8,6 +8,7 @@ export * from "./environment";
 export * from "./literal";
 export * from "./matchable";
 export * from "./module";
+export * from "./module-chain";
 export * from "./rule";
 export * from "./sequence";
 export * from "./stat-element";

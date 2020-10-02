@@ -4,6 +4,7 @@ import {
   Definition,
   Environment,
   Identifier,
+  ModuleChain,
   Rule
 } from ".";
 
@@ -14,7 +15,7 @@ export class Module {
   private definitions: Array<Definition> = [];
   private rules: Array<Rule> = [];
   private environments: Set<Environment> = new Set();
-  private moduleChain?: Array<ModuleName>;
+  private moduleChain?: ModuleChain;
 
   public constructor(name: ModuleName | null, sentences: Array<Sentence>) {
     this.name = name;
@@ -25,7 +26,7 @@ export class Module {
         this.rules.push(sentence);
       } else if (sentence instanceof Environment) {
         this.environments.add(sentence);
-      } else if (Array.isArray(sentence)) {
+      } else if (sentence instanceof ModuleChain) {
         this.moduleChain = sentence;
       } else {
         throw new Error("this cannot happen");
@@ -56,7 +57,7 @@ export class Module {
     }
     if (this.moduleChain) {
       string += " ".repeat(indent + 2) + "module chain:\n";
-      string += " ".repeat(indent + 4) + `%% ${this.moduleChain.join(" >> ")};\n`;
+      string += " ".repeat(indent + 4) + `%% ${this.moduleChain};\n`;
     }
     string += " ".repeat(indent) + "}\n";
     return string;
@@ -68,5 +69,4 @@ export class Module {
 export type ModuleSimpleName = Identifier;
 export type ModuleChainName = [Identifier, Identifier];
 export type ModuleName = ModuleSimpleName | ModuleChainName;
-export type ModuleChain = Array<ModuleName>;
 export type Sentence = Definition | Rule | Environment | ModuleChain;

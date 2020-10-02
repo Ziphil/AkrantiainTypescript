@@ -6,6 +6,7 @@ import {
   Definition,
   Disjunction,
   Identifier,
+  ModuleChain,
   Quote,
   Rule,
   Sequence,
@@ -88,15 +89,15 @@ describe("Parsers", () => {
   });
   test("module chain: simple", () => {
     let result = Parsers.moduleChain.tryParse(`%% A >> B >> C;`);
-    expect(result).toBeInstanceOf(Array);
-    expect(result.length).toBe(3);
-    expect(result[1].name).toBe("B");
-    expect(result[2].name).toBe("C");
+    expect(result).toBeInstanceOf(ModuleChain);
+    expect(result.modules.length).toBe(3);
+    expect(result.modules[1].name).toBe("B");
+    expect(result.modules[2].name).toBe("C");
   });
   test("module chain: complex", () => {
     let result = Parsers.moduleChain.tryParse(`%% A >> (foo => bar => baz) >> B >> no => paren => no => paren >> C >> D;`);
-    console.log(result.join(" >> "));
-    expect(result).toBeInstanceOf(Array);
-    expect(result.length).toBe(9);
+    console.log(result.toString());
+    expect(result).toBeInstanceOf(ModuleChain);
+    expect(result.modules.length).toBe(9);
   });
 });

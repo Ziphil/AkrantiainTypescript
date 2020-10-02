@@ -150,10 +150,11 @@ export class Parsers {
   public static moduleChain: Parser<ModuleChain> = lazy(() => {
     let chainElementParser = alt(Parsers.moduleChainElement, Parsers.moduleChainElement.thru(Parsers.parened));
     let chainParser = chainElementParser.sepBy1(Parsimmon.string(">>").trim(Parsers.blank)).map((chainElements) => {
-      let chain = [];
+      let modules = [];
       for (let chainElement of chainElements) {
-        chain.push(...chainElement);
+        modules.push(...chainElement);
       }
+      let chain = new ModuleChain(modules);
       return chain;
     });
     let parser = seq(
@@ -167,7 +168,7 @@ export class Parsers {
   // モジュールチェイン素をパースします。
   // パースした結果は、推移型モジュールを 1 つずつに分解したモジュール名の配列になります。
   // 例えば、「A => B => C => D」という文字列は、「A => B」と「B => C」と「C => D」の 3 つのモジュール名からなる配列にパースされます。
-  public static moduleChainElement: Parser<ModuleChain> = lazy(() => {
+  public static moduleChainElement: Parser<Array<ModuleName>> = lazy(() => {
     let parser = Parsers.identifier.sepBy1(Parsimmon.string("=>").trim(Parsers.blank)).map((strings) => {
       if (strings.length === 1) {
         return [strings[0]];
