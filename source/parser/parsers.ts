@@ -42,10 +42,7 @@ export class Parsers {
       seq(Parsers.blankOrBreak, Parsimmon.string("{"), Parsers.blankOrBreak),
       Parsers.sentence.many(),
       seq(Parsers.blankOrBreak, Parsimmon.string("}"))
-    ).map(([, name, , sentences]) => {
-      let module = new Module(name, sentences);
-      return module;
-    });
+    ).map(([, name, , sentences]) => new Module(name, sentences));
     return parser;
   });
 
@@ -60,10 +57,7 @@ export class Parsers {
       Parsimmon.string("=").trim(Parsers.blank),
       Parsers.disjunction,
       seq(Parsers.blank, Parsers.semicolon)
-    ).map(([identifier, , content]) => {
-      let definition = new Definition(identifier, content);
-      return definition;
-    });
+    ).map(([identifier, , content]) => new Definition(identifier, content));
     return parser;
   });
 
@@ -73,13 +67,7 @@ export class Parsers {
       Parsimmon.string("->").trim(Parsers.blank),
       Parsers.ruleRight,
       seq(Parsers.blank, Parsers.semicolon)
-    ).map(([ruleLeft, , ruleRight]) => {
-      let selections = ruleLeft.selections;
-      let leftCondition = ruleLeft.leftCondition;
-      let rightCondition = ruleLeft.rightCondition;
-      let rule = new Rule(selections, leftCondition, rightCondition, ruleRight);
-      return rule;
-    });
+    ).map(([ruleLeft, , ruleRight]) => new Rule(ruleLeft, ruleRight));
     return parser;
   });
 
@@ -90,10 +78,7 @@ export class Parsers {
       Parsers.selection.sepBy1(Parsers.blank),
       Parsers.blank,
       Parsers.condition.times(0, 1).map((result) => result[0])
-    ).map(([leftCondition, , selections, , rightCondition]) => {
-      let ruleLeft = {selections, leftCondition, rightCondition};
-      return ruleLeft;
-    });
+    ).map(([leftCondition, , selections, , rightCondition]) => ({selections, leftCondition, rightCondition}));
     return parser;
   });
 
@@ -118,10 +103,7 @@ export class Parsers {
       Parsimmon.string("!"),
       Parsers.blank,
       Parsers.selection
-    ).map(([, , selection]) => {
-      let condition = new Disjunction([selection], true);
-      return condition;
-    });
+    ).map(([, , selection]) => new Disjunction([selection], true));
     return parser;
   });
 
@@ -145,9 +127,7 @@ export class Parsers {
       Parsers.blank,
       chainParser,
       seq(Parsers.blank, Parsers.semicolon)
-    ).map(([, , chain]) => {
-      return chain;
-    });
+    ).map(([, , chain]) => chain);
     return parser;
   });
 
@@ -184,10 +164,7 @@ export class Parsers {
       Parsers.identifier,
       Parsimmon.string("=>").trim(Parsers.blank),
       Parsers.identifier
-    ).map(([first, , second]) => {
-      let name = [first, second] as ModuleChainName;
-      return name;
-    });
+    ).map(([first, , second]) => [first, second] as ModuleChainName);
     return parser;
   });
 
@@ -196,10 +173,7 @@ export class Parsers {
       Parsimmon.string("\""),
       alt(Parsers.quoteEscape, Parsers.quoteContent).many().tie(),
       Parsimmon.string("\"")
-    ).map(([, string]) => {
-      let quote = new Quote(string);
-      return quote;
-    });
+    ).map(([, string]) => new Quote(string));
     return parser;
   });
 
@@ -229,10 +203,7 @@ export class Parsers {
       Parsimmon.string("/"),
       alt(Parsers.slashEscape, Parsers.slashContent).many().tie(),
       Parsimmon.string("/")
-    ).map(([, string]) => {
-      let slash = new Slash(string);
-      return slash;
-    });
+    ).map(([, string]) => new Slash(string));
     return parser;
   });
 

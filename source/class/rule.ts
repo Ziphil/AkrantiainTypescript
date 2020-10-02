@@ -14,11 +14,11 @@ export class Rule {
   public rightCondition?: Matchable;
   public phonemes: Array<Phoneme>;
 
-  public constructor(selections: Array<Matchable>, leftCondition: Matchable | undefined, rightCondition: Matchable | undefined, phonemes: Array<Phoneme>) {
-    this.selections = selections;
-    this.leftCondition = leftCondition;
-    this.rightCondition = rightCondition;
-    this.phonemes = phonemes;
+  public constructor(ruleLeft: RuleLeft, ruleRight: RuleRight) {
+    this.selections = ruleLeft.selections;
+    this.leftCondition = ruleLeft.leftCondition;
+    this.rightCondition = ruleLeft.rightCondition;
+    this.phonemes = ruleRight;
   }
 
   public toString(): string {
