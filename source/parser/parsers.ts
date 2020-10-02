@@ -116,10 +116,25 @@ export class Parsers {
 
   public static environment: Parser<Environment> = lazy(() => {
     let parser = seq(
-      Parsimmon.string("@"),
-      Parsers.identifier.map((identifier) => identifier.name),
-      seq(Parsers.blank, Parsers.semicolon)
-    ).map(([, name]) => new Environment(name));
+      seq(Parsimmon.string("@"), Parsers.blank),
+      Parsers.identifier.map((identifier) => identifier.name)
+    ).map(([, name]) => {
+      try {
+        return new Environment(name);
+      } catch (error) {
+        if (error.message === "invalid environment name") {
+          return null;
+        } else {
+          throw error;
+        }
+      }
+    }).chain((environment) => {
+      if (environment !== null) {
+        return seq(Parsers.blank, Parsers.semicolon).result(environment);
+      } else {
+        return Parsimmon.fail("invalid environment name");
+      }
+    });
     return parser;
   });
 
@@ -133,11 +148,10 @@ export class Parsers {
       return chain;
     });
     let parser = seq(
-      Parsimmon.string("%%"),
-      Parsers.blank,
+      seq(Parsimmon.string("%%"), Parsers.blank),
       chainParser,
       seq(Parsers.blank, Parsers.semicolon)
-    ).map(([, , chain]) => chain);
+    ).map(([, chain]) => chain);
     return parser;
   });
 
