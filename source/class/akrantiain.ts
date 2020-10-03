@@ -16,13 +16,27 @@ export class Akrantiain {
   private explicitModules: Array<Module> = [];
 
   public constructor(modules: Array<Module>) {
-    modules.forEach((module) => {
+    for (let module of modules) {
       if (module.name === null) {
-        this.implicitModule = module;
+        if (this.implicitModule === undefined) {
+          this.implicitModule = module;
+        } else {
+          throw new AkrantiainError(1003, -1, "There are more than one implicit modules");
+        }
       } else {
-        this.explicitModules.push(module);
+        let duplicated = this.explicitModules.findIndex((existingModule) => existingModule.name!.equals(module.name!)) >= 0;
+        if (!duplicated) {
+          this.explicitModules.push(module);
+        } else {
+          throw new AkrantiainError(1004, 1113, `Duplicate definition of module: '${module.name}'`);
+        }
       }
-    });
+    }
+    if (this.implicitModule === undefined) {
+      throw new AkrantiainError(1002, -1, "No implicit module");
+    }
+    this.checkUnknownModuleName();
+    this.checkCircularModuleName();
   }
 
   public static load(source: string): Akrantiain {
@@ -35,7 +49,27 @@ export class Akrantiain {
     if (this.implicitModule !== undefined) {
       return this.implicitModule.convert(input, this);
     } else {
-      throw new AkrantiainError(-1, 9003, "Cannot happen (at Akrantiain#convert)");
+      throw new AkrantiainError(9003, -1, "Cannot happen (at Akrantiain#convert)");
+    }
+  }
+
+  // モジュールチェーン文で存在しないモジュールを参照していないかチェックします。
+  public checkUnknownModuleName(): void {
+    let modules = [...this.explicitModules, this.implicitModule!];
+    for (let module of modules) {
+      let name = module.findUnknownModuleName(this);
+      if (name !== undefined) {
+        throw new AkrantiainError(1000, 1111, `No such module: '${name}'`);
+      }
+    }
+  }
+
+  // モジュールチェーン文でモジュールが循環参照していないかチェックします。
+  // このメソッドは暗黙モジュールから参照されているもののみを調べるので、参照されていない明示モジュールの中での循環参照は検査しません。
+  public checkCircularModuleName(): void {
+    let name = this.implicitModule!.findCircularModuleName([], this);
+    if (name !== undefined) {
+      throw new AkrantiainError(1001, 1112, `Circular reference involving module: '${name}'`);
     }
   }
 

@@ -32,7 +32,7 @@ export class ModuleName {
     if (this.identifier instanceof Identifier) {
       string += this.identifier.toString();
     } else {
-      string += `(${this.identifier.join(" => ")})`;
+      string += this.identifier.join(" => ");
     }
     return string;
   }

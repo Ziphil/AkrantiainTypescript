@@ -1,6 +1,7 @@
 //
 
 import {
+  Identifier,
   Matchable,
   Module,
   Stat
@@ -51,6 +52,26 @@ export class Sequence implements Matchable {
 
   public isConcrete(): boolean {
     return this.matchables.length >= 2 || (this.matchables.length >= 1 && this.matchables[0].isConcrete());
+  }
+
+  public findUnknownIdentifier(module: Module): Identifier | undefined {
+    for (let matchable of this.matchables) {
+      let identifier = matchable.findUnknownIdentifier(module);
+      if (identifier !== undefined) {
+        return identifier;
+      }
+    }
+    return undefined;
+  }
+
+  public findCircularIdentifier(identifiers: Array<Identifier>, module: Module): Identifier | undefined {
+    for (let matchable of this.matchables) {
+      let identifier = matchable.findCircularIdentifier(identifiers, module);
+      if (identifier !== undefined) {
+        return identifier;
+      }
+    }
+    return undefined;
   }
 
   public toString(): string {

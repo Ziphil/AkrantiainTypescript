@@ -7,6 +7,7 @@ import {
   Disjunction,
   Environment,
   EnvironmentName,
+  Identifier,
   Matchable,
   ModuleChain,
   ModuleName,
@@ -27,7 +28,15 @@ export class Module {
     this.name = name;
     for (let sentence of sentences) {
       if (sentence instanceof Definition) {
-        this.definitions.push(sentence);
+        let duplicatedIndex = this.definitions.findIndex((definition) => {
+          let castSentence = sentence as Definition;
+          return definition.identifier.equals(castSentence.identifier);
+        });
+        if (duplicatedIndex < 0) {
+          this.definitions.push(sentence);
+        } else {
+          throw new AkrantiainError(1103, 210, `Duplicate definition of identifier: '${sentence.identifier}'`);
+        }
       } else if (sentence instanceof Rule) {
         this.rules.push(sentence);
       } else if (sentence instanceof Environment) {
@@ -38,6 +47,8 @@ export class Module {
         throw new Error("This cannot happen");
       }
     }
+    this.checkUnknownIdentifier();
+    this.checkCircularIdentifier();
   }
 
   // 与えられた文字列の変換を実行します。
@@ -58,7 +69,7 @@ export class Module {
       if (invalidElements.length <= 0 || this.hasEnvironment("FALL_THROUGH")) {
         return currentStat.createOutput(this);
       } else {
-        throw new AkrantiainError(210, 2000, "No rules that can handle some characters", invalidElements);
+        throw new AkrantiainError(2000, 210, "No rules that can handle some characters", invalidElements);
       }
     } else {
       return input;
@@ -73,16 +84,89 @@ export class Module {
         if (module !== undefined) {
           currentOutput = module.convert(currentOutput, akrantiain);
         } else {
-          throw new AkrantiainError(-1, 9002, "Cannot happen (at Module#convertByModuleChain)");
+          throw new AkrantiainError(9002, -1, "Cannot happen (at Module#convertByModuleChain)");
         }
       }
     }
     return currentOutput;
   }
 
-  public findContent(name: string): Matchable | undefined {
+  // 識別子定義文や変換規則定義文でモジュール内に存在しない識別子を参照していないかチェックします。
+  public checkUnknownIdentifier(): void {
     for (let definition of this.definitions) {
-      if (definition.identifier.name === name) {
+      let identifier = definition.findUnknownIdentifier(this);
+      if (identifier !== undefined) {
+        throw new AkrantiainError(1100, -1, `Unresolved identifier: '${identifier.name}' in '${definition}'`);
+      }
+    }
+    for (let rule of this.rules) {
+      let identifier = rule.findUnknownIdentifier(this);
+      if (identifier !== undefined) {
+        throw new AkrantiainError(1101, 335, `Unresolved identifier: '${identifier.name}' in '${rule}'`);
+      }
+    }
+  }
+
+  // 識別子定義文で識別子が循環参照していないかチェックします。
+  public checkCircularIdentifier(): void {
+    for (let definition of this.definitions) {
+      let identifier = definition.findCircularIdentifier([], this);
+      if (identifier !== undefined) {
+        throw new AkrantiainError(1102, -1, `Circular reference involving identifier: '${identifier.name}' in '${definition}'`);
+      }
+    }
+  }
+
+  // 存在しないモジュール名を含んでいればそれを返し、そうでなければ undefined を返します。
+  public findUnknownModuleName(akrantiain: Akrantiain): ModuleName | undefined {
+    if (this.moduleChain !== undefined) {
+      for (let name of this.moduleChain.names) {
+        if (akrantiain.findModule(name) === undefined) {
+          return name;
+        }
+      }
+      return undefined;
+    } else {
+      return undefined;
+    }
+  }
+
+  // モジュールチェーン文を全て展開したときに names に含まれるモジュール名が含まれていればそれを返し、そうでなければ undefined を返します。
+  // モジュールチェーンが循環参照していないかを調べるのに用いられます。
+  // なお、モジュールチェーン文で用いられているモジュールが存在することを仮定して動作するので、findUnknownModuleName メソッドを呼び出してから実行してください。
+  public findCircularModuleName(names: Array<ModuleName>, akrantiain: Akrantiain): ModuleName | undefined {
+    if (this.moduleChain !== undefined) {
+      let name = names.find((name) => this.name === null || name.equals(this.name));
+      if (name !== undefined) {
+        return name;
+      } else {
+        let nextNames = (this.name === null) ? names : [...names, this.name];
+        for (let searchName of this.moduleChain.names) {
+          let module = akrantiain.findModule(searchName)!;
+          let name = module.findCircularModuleName(nextNames, akrantiain);
+          if (name !== undefined) {
+            return name;
+          }
+        }
+        return undefined;
+      }
+    } else {
+      return undefined;
+    }
+  }
+
+  public findDefinition(identifier: Identifier): Definition | undefined {
+    for (let definition of this.definitions) {
+      if (definition.identifier.equals(identifier)) {
+        return definition;
+      }
+    }
+    return undefined;
+  }
+
+  public findContent(identifier: Identifier): Matchable | undefined {
+    for (let definition of this.definitions) {
+      if (definition.identifier.equals(identifier)) {
         return definition.content;
       }
     }
@@ -98,6 +182,10 @@ export class Module {
     return new Disjunction([]);
   }
 
+  public hasDefinition(identifier: Identifier): boolean {
+    return this.definitions.findIndex((definition) => definition.identifier.equals(identifier)) >= 0;
+  }
+
   public hasEnvironment(name: EnvironmentName): boolean {
     return this.environments.findIndex((environment) => environment.name === name) >= 0;
   }
@@ -107,21 +195,21 @@ export class Module {
     string += " ".repeat(indent) + `% ${this.name ?? "<implicit>"} {\n`;
     if (this.definitions.length > 0) {
       string += " ".repeat(indent + 2) + "definitions:\n";
-      this.definitions.forEach((definition) => {
+      for (let definition of this.definitions) {
         string += " ".repeat(indent + 4) + `${definition}\n`;
-      });
+      }
     }
     if (this.rules.length > 0) {
       string += " ".repeat(indent + 2) + "rules:\n";
-      this.rules.forEach((rule) => {
+      for (let rule of this.rules) {
         string += " ".repeat(indent + 4) + `${rule}\n`;
-      });
+      }
     }
     if (this.environments.length > 0) {
       string += " ".repeat(indent + 2) + "environments:\n";
-      this.environments.forEach((environment) => {
+      for (let environment of this.environments) {
         string += " ".repeat(indent + 4) + `${environment}\n`;
-      });
+      }
     }
     if (this.moduleChain) {
       string += " ".repeat(indent + 2) + "module chain:\n";

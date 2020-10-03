@@ -20,7 +20,7 @@ export class Environment {
     } else if (upperRawName === "USE_NFD") {
       this.name = "USE_NFD";
     } else {
-      let caution = new AkrantiainError(2435, 3000, `Invalid environment name: '${rawName}'`);
+      let caution = new AkrantiainError(3000, 2435, `Invalid environment name: '${rawName}'`);
       console.warn(caution.message);
     }
   }

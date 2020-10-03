@@ -1,6 +1,7 @@
 //
 
 import {
+  Identifier,
   Matchable,
   Module,
   Stat
@@ -95,6 +96,14 @@ export class Quote implements Matchable {
 
   public isConcrete(): boolean {
     return true;
+  }
+
+  public findUnknownIdentifier(module: Module): Identifier | undefined {
+    return undefined;
+  }
+
+  public findCircularIdentifier(identifiers: Array<Identifier>, module: Module): Identifier | undefined {
+    return undefined;
   }
 
   public toString(): string {
