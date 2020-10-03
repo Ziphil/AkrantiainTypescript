@@ -23,3 +23,8 @@ Call `Akrantiain.load` with a source string to create an `Akrantiain` object, an
 let akrantiain = Akrantiain.load(`"a" -> /X/; "b" -> /Y/; "c" -> /Z/;`);
 let output = akrantiain.convert("abc");
 console.log(output)  // outputs “XYZ”
+```
+
+## Current status
+Currently exception handling and checking is not yet implemented.
+If you pass an erroneous source to an `Akrantiain` object (such as that containing use of undefined identifiers or circular module references), it may show weird behaviour.
