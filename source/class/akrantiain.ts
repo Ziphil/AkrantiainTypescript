@@ -35,7 +35,7 @@ export class Akrantiain {
     if (this.implicitModule !== undefined) {
       return this.implicitModule.convert(input, this);
     } else {
-      throw new AkrantiainError(undefined, 3, "cannot happen (at Akrantiain#convert)");
+      throw new AkrantiainError(-1, 9003, "Cannot happen (at Akrantiain#convert)");
     }
   }
 

@@ -14,6 +14,14 @@ describe("normal", () => {
     expect(akrantiain.convert("ab ca bbc")).toBe("XY ZX YYZ");
     expect(() => akrantiain.convert("aka")).toThrow();
   });
+  test("case conversion", () => {
+    let akrantiain = Akrantiain.load(`
+      "A" -> /X/; "b" -> /Y/; "C" -> /Z/;
+      "Ж" -> /1/; "ш" -> /2/; "Θ" -> /3/; "ψ" -> /4/;
+    `);
+    expect(akrantiain.convert("AbC aBc")).toBe("XYZ XYZ");
+    expect(akrantiain.convert("ЖшΘψ жШθΨ")).toBe("1234 1234");
+  });
   test("simple module", () => {
     let akrantiain = Akrantiain.load(`
       % upper {
@@ -40,10 +48,17 @@ describe("extension", () => {
       vowel2 = vowel vowel;
       vowel3 = vowel2 vowel;
       vowel4 = vowel2 vowel2;
-      vowel4 -> /4/; vowel3 -> /3/; vowel2 -> /2/; vowel -> /1/;
+      "s" vowel3 -> /before3/ //;
+      "s" vowel2 -> /before2/ //;
+      "t" !vowel2 -> /not2/;
+      "t" !vowel3 -> /not3/;
+      "s" -> /S/; "t" -> /T/;
+      vowel4 -> /[4]/; vowel3 -> /[3]/; vowel2 -> /[2]/; vowel -> /[1]/;
     `);
-    expect(akrantiain.convert("aeia aou au oa u")).toBe("4 3 2 2 1");
-    expect(akrantiain.convert("aeioaeioaei")).toBe("443");
+    expect(akrantiain.convert("aeia aou au oa u")).toBe("[4] [3] [2] [2] [1]");
+    expect(akrantiain.convert("aeioaeioaei")).toBe("[4][4][3]");
+    expect(akrantiain.convert("saei saa souu")).toBe("before3 before2 before3");
+    expect(akrantiain.convert("ta tei tuao")).toBe("not2[1] not3[2] T[3]");
   });
 });
 

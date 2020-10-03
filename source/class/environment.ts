@@ -7,7 +7,7 @@ import {
 
 export class Environment {
 
-  public name: EnvironmentName;
+  public name?: EnvironmentName;
 
   public constructor(rawName: string) {
     let upperRawName = rawName.toUpperCase();
@@ -20,13 +20,18 @@ export class Environment {
     } else if (upperRawName === "USE_NFD") {
       this.name = "USE_NFD";
     } else {
-      throw new AkrantiainError(2435, 2001, "invalid environment name");
+      let caution = new AkrantiainError(2435, 3000, `Invalid environment name: '${rawName}'`);
+      console.warn(caution.message);
     }
   }
 
   public toString(): string {
     let string = "";
-    string += `@${this.name};`;
+    if (this.name !== undefined) {
+      string += `@${this.name};`;
+    } else {
+      string += "@<undefined>;";
+    }
     return string;
   }
 

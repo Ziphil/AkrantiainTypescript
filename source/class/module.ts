@@ -35,7 +35,7 @@ export class Module {
       } else if (sentence instanceof ModuleChain) {
         this.moduleChain = sentence;
       } else {
-        throw new Error("this cannot happen");
+        throw new Error("This cannot happen");
       }
     }
   }
@@ -58,7 +58,7 @@ export class Module {
       if (invalidElements.length <= 0 || this.hasEnvironment("FALL_THROUGH")) {
         return currentStat.createOutput(this);
       } else {
-        throw new AkrantiainError(210, 1000, "No rules that can handle some characters", invalidElements);
+        throw new AkrantiainError(210, 2000, "No rules that can handle some characters", invalidElements);
       }
     } else {
       return input;
@@ -73,7 +73,7 @@ export class Module {
         if (module !== undefined) {
           currentOutput = module.convert(currentOutput, akrantiain);
         } else {
-          throw new AkrantiainError(undefined, 2, "cannot happen (at Module#convertByModuleChain)");
+          throw new AkrantiainError(-1, 9002, "Cannot happen (at Module#convertByModuleChain)");
         }
       }
     }

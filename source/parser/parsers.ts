@@ -129,19 +129,9 @@ export class Parsers {
   public static environment: Parser<Environment> = lazy(() => {
     let parser = seq(
       seq(Parsimmon.string("@"), Parsers.blank),
-      Parsers.identifier.chain((identifier) => {
-        try {
-          return Parsimmon.succeed(new Environment(identifier.name));
-        } catch (error) {
-          if (error.name === "AkrantiainError") {
-            return Parsimmon.fail(error.message);
-          } else {
-            throw error;
-          }
-        }
-      }),
+      Parsers.identifier.map((identifier) => identifier.name),
       seq(Parsers.blank, Parsers.semicolon)
-    ).map(([, environment]) => environment);
+    ).map(([, rawName]) => new Environment(rawName));
     return parser;
   });
 
