@@ -20,6 +20,8 @@ It also extends the syntax and semantics of the language, whose documentation is
 ## Usage
 Call `Akrantiain.load` with a source string to create an `Akrantiain` object, and then call `convert` with an input string:
 ```typescript
+const {Akrantiain} = require("akrantiain");
+
 let akrantiain = Akrantiain.load(`"a" -> /X/; "b" -> /Y/; "c" -> /Z/;`);
 let output = akrantiain.convert("abc");
 console.log(output)  // outputs “XYZ”

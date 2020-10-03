@@ -2,12 +2,16 @@
   "name": "akrantiain",
   "version": "0.0.0",
   "author": "Ziphil",
-  "description": "",
+  "description": "TypeScript implementation of Akrantiain, a domain specific language to describe phonological rules of languages",
+  "homepage": "https://github.com/Ziphil/TypescriptAkrantiain",
+  "license": "MIT",
   "main": "dist/index.js",
   "scripts": {
     "develop": "ts-node source/index.ts",
+    "build": "tsc",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "prepare": "tsc"
   },
   "jest": {
     "testMatch": [
