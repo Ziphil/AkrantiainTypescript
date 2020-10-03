@@ -1,6 +1,7 @@
 //
 
 import {
+  Identifier,
   Matchable,
   Module,
   Stat
@@ -69,6 +70,14 @@ export class Circumflex implements Matchable {
 
   public isConcrete(): boolean {
     return false;
+  }
+
+  public findUnknownIdentifier(module: Module): Identifier | undefined {
+    return undefined;
+  }
+
+  public findCircularIdentifier(identifiers: Array<Identifier>, module: Module): Identifier | undefined {
+    return undefined;
   }
 
   public toString(): string {

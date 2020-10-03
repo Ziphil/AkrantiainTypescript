@@ -62,6 +62,153 @@ describe("extension", () => {
   });
 });
 
+describe("error", () => {
+  test("unresolved module name", () => {
+    expect.assertions(2);
+    try {
+      let akrantiain = Akrantiain.load(`
+        % foo { %% bar => baz; }
+        % bar { "b" -> /B/; }
+        % baz { "c" -> /C/; }
+        "d" -> /D/;
+      `);
+    } catch (error) {
+      expect(error.name).toBe("AkrantiainError");
+      expect(error.code).toBe(1000);
+    }
+  });
+  test("circular module name", () => {
+    expect.assertions(2);
+    try {
+      let akrantiain = Akrantiain.load(`
+        % foo { %% bar; }
+        % bar { %% baz; }
+        % baz { %% qux; }
+        % qux { %% bar; }
+        %% foo;
+      `);
+    } catch (error) {
+      expect(error.name).toBe("AkrantiainError");
+      expect(error.code).toBe(1001);
+    }
+  });
+  test("no implicit module", () => {
+    expect.assertions(2);
+    try {
+      let akrantiain = Akrantiain.load(`
+        % foo { "a" -> /A/; }
+        % bar { "b" -> /B/; }
+      `);
+    } catch (error) {
+      expect(error.name).toBe("AkrantiainError");
+      expect(error.code).toBe(1002);
+    }
+  });
+  test("more than one implicit modules", () => {
+    expect.assertions(2);
+    try {
+      let akrantiain = Akrantiain.load(`
+        @FALL_THROUGH;
+        % foo { "a" -> /A/; }
+        % bar { "b" -> /B/; }
+        "c" -> /C/;
+      `);
+    } catch (error) {
+      expect(error.name).toBe("AkrantiainError");
+      expect(error.code).toBe(1003);
+    }
+  });
+  test("duplicate module name", () => {
+    expect.assertions(2);
+    try {
+      let akrantiain = Akrantiain.load(`
+        % foo => bar { "a" -> /A/; }
+        % bar { "b" -> /B/; }
+        % foo => bar { "c" -> /C/; }
+        "d" -> /D/;
+      `);
+    } catch (error) {
+      expect(error.name).toBe("AkrantiainError");
+      expect(error.code).toBe(1004);
+    }
+  });
+  test("unresolved identifier (in definition)", () => {
+    expect.assertions(2);
+    try {
+      let akrantiain = Akrantiain.load(`
+        foo = "a" | "b";
+        bar = undefined;
+      `);
+    } catch (error) {
+      expect(error.name).toBe("AkrantiainError");
+      expect(error.code).toBe(1100);
+    }
+  });
+  test("unresolved identifier (in rule)", () => {
+    expect.assertions(2);
+    try {
+      let akrantiain = Akrantiain.load(`
+        foo = "a" | "b";
+        foo -> /a/;
+        foo undefined -> /b/ /c/;
+      `);
+    } catch (error) {
+      expect(error.name).toBe("AkrantiainError");
+      expect(error.code).toBe(1101);
+    }
+  });
+  test("circular identifier", () => {
+    expect.assertions(2);
+    try {
+      let akrantiain = Akrantiain.load(`
+        foo = bar | circular;
+        circular = bar | baz;
+        baz = foo;
+        bar = "a" | "b";
+      `);
+    } catch (error) {
+      expect(error.name).toBe("AkrantiainError");
+      expect(error.code).toBe(1102);
+    }
+  });
+  test("duplicate identifier", () => {
+    expect.assertions(2);
+    try {
+      let akrantiain = Akrantiain.load(`
+        foo = "a" | "b";
+        bar = "c";
+        baz = "d";
+        foo = "e" | "f";
+      `);
+    } catch (error) {
+      expect(error.name).toBe("AkrantiainError");
+      expect(error.code).toBe(1103);
+    }
+  });
+  test("mismatched terms", () => {
+    expect.assertions(2);
+    try {
+      let akrantiain = Akrantiain.load(`
+        !"a" "b" "c" !"d" -> /b/ /c/ /?/;
+      `);
+    } catch (error) {
+      expect(error.name).toBe("AkrantiainError");
+      expect(error.code).toBe(1104);
+    }
+  });
+  test("non-concrete", () => {
+    expect.assertions(2);
+    try {
+      let akrantiain = Akrantiain.load(`
+        "a" "b" "c" -> $ $ $;
+      `);
+    } catch (error) {
+      expect(error.name).toBe("AkrantiainError");
+      expect(error.code).toBe(1105);
+    }
+  });
+});
+
 describe("examples by the original repository", () => {
   test("syntax", () => {
     let akrantiain = Akrantiain.load(`

@@ -74,7 +74,7 @@ describe("rule", () => {
     expect(result).toBeInstanceOf(Rule);
   });
   test("complex", () => {
-    let result = Parsers.rule.tryParse(`!left some ^ ("com" pl | "ex") exam "ple" ^ !("r" | "i" "\\"g\\""| ht) -> /m/ $ /3/ /4/ /\\/5\\// $;`);
+    let result = Parsers.rule.tryParse(`!left some ^ ("com" pl | "ex") exam "ple" ^ !("r" | "i" "\\"g\\""| ht) -> /m/ $ /\\/5\\// $;`);
     expect(result).toBeInstanceOf(Rule);
   });
 });

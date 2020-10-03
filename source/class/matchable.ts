@@ -1,6 +1,7 @@
 //
 
 import {
+  Identifier,
   Module,
   Stat
 } from ".";
@@ -18,7 +19,15 @@ export interface Matchable {
   // マッチしなかった場合は -1 を返します。
   matchLeft(stat: Stat, to: number, module: Module): number;
 
-  // 変換先をもつならば true を返し、そうでなければ false を返します。
+  // 対応する変換先文字列が必要ならば true を返し、そうでなければ false を返します。
+  // 現状、変換先文字列を必要としないのは「^」(とそれ 1 つだけから成る Sequence か Disjunction) だけなので、この場合に false を返し、それ以外の場合では true を返します。
   isConcrete(): boolean;
+
+  // モジュール内に存在しない識別子を含んでいればそれを返し、そうでなければ undefined を返します。
+  findUnknownIdentifier(module: Module): Identifier | undefined;
+
+  // 識別子定義文を全て展開したときに identifiers に含まれる識別子が含まれていればそれを返し、そうでなければ undefined を返します。
+  // 識別子の定義が循環参照していないかを調べるのに用いられます。
+  findCircularIdentifier(identifiers: Array<Identifier>, module: Module): Identifier | undefined;
 
 }
