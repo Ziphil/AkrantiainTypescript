@@ -23,7 +23,6 @@ describe("akrantiain", () => {
       vowel = "a" | "e" | "i" | "o" | "u";
       vowel -> /@/;
     `.trim());
-    console.log(result.toString());
     expect(result).toBeInstanceOf(Akrantiain);
     expect(result.explicitModules.length).toBe(0);
     expect(result.implicitModule.definitions.length).toBe(1);
@@ -45,7 +44,6 @@ describe("akrantiain", () => {
       }
       %% foo => bar >> neko;
     `.trim());
-    console.log(result.toString());
     expect(result).toBeInstanceOf(Akrantiain);
     expect(result.explicitModules.length).toBe(2);
     expect(result.explicitModules[0].definitions.length).toBe(3);
@@ -77,7 +75,6 @@ describe("rule", () => {
   });
   test("complex", () => {
     let result = Parsers.rule.tryParse(`!left some ^ ("com" pl | "ex") exam "ple" ^ !("r" | "i" "\\"g\\""| ht) -> /m/ $ /3/ /4/ /\\/5\\// $;`);
-    console.log(result.toString());
     expect(result).toBeInstanceOf(Rule);
   });
 });
@@ -104,7 +101,6 @@ describe("disjunction", () => {
   });
   test("complex", () => {
     let result = Parsers.disjunction.tryParse(`"string" (nest | nest ^ (nest) (nest | nest)) (nest nest) | "right"`);
-    console.log(result.toString());
     expect(result).toBeInstanceOf(Disjunction);
   });
 });
@@ -119,7 +115,6 @@ describe("module chain", () => {
   });
   test("complex", () => {
     let result = Parsers.moduleChain.tryParse(`%% A >> (foo => bar => baz) >> B >> no => paren => no => paren >> C >> D;`);
-    console.log(result.toString());
     expect(result).toBeInstanceOf(ModuleChain);
     expect(result.names.length).toBe(9);
   });

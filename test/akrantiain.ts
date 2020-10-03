@@ -33,6 +33,20 @@ describe("normal", () => {
   });
 });
 
+describe("extension", () => {
+  test("simple", () => {
+    let akrantiain = Akrantiain.load(`
+      vowel = "a" | "e" | "i" | "o" | "u";
+      vowel2 = vowel vowel;
+      vowel3 = vowel2 vowel;
+      vowel4 = vowel2 vowel2;
+      vowel4 -> /4/; vowel3 -> /3/; vowel2 -> /2/; vowel -> /1/;
+    `);
+    expect(akrantiain.convert("aeia aou au oa u")).toBe("4 3 2 2 1");
+    expect(akrantiain.convert("aeioaeioaei")).toBe("443");
+  });
+});
+
 describe("examples by the original repository", () => {
   test("syntax", () => {
     let akrantiain = Akrantiain.load(`
