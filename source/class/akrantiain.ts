@@ -5,6 +5,9 @@ import {
   Module,
   ModuleName
 } from ".";
+import {
+  Parsers
+} from "../parser/parsers";
 
 
 export class Akrantiain {
@@ -20,6 +23,11 @@ export class Akrantiain {
         this.explicitModules.push(module);
       }
     });
+  }
+
+  public static load(source: string): Akrantiain {
+    let akrantiain = Parsers.akrantiain.tryParse(source);
+    return akrantiain;
   }
 
   // 暗黙モジュールから与えられた文字列の変換を実行します。
