@@ -18,9 +18,7 @@ import {
   Matchable,
   Module,
   ModuleChain,
-  ModuleChainName,
   ModuleName,
-  ModuleSimpleName,
   Quote,
   Rule,
   RuleLeft,
@@ -169,13 +167,14 @@ export class Parsers {
   // パースした結果は、推移型モジュールを 1 つずつに分解したモジュール名の配列になります。
   // 例えば、「A => B => C => D」という文字列は、「A => B」と「B => C」と「C => D」の 3 つのモジュール名からなる配列にパースされます。
   public static moduleChainElement: Parser<Array<ModuleName>> = lazy(() => {
-    let parser = Parsers.identifier.sepBy1(Parsimmon.string("=>").trim(Parsers.blank)).map((strings) => {
-      if (strings.length === 1) {
-        return [strings[0]];
+    let parser = Parsers.identifier.sepBy1(Parsimmon.string("=>").trim(Parsers.blank)).map((identifiers) => {
+      if (identifiers.length === 1) {
+        let name = new ModuleName(identifiers[0]);
+        return [name];
       } else {
         let names = [];
-        for (let i = 0 ; i < strings.length - 1; i ++) {
-          let name = [strings[i], strings[i + 1]] as ModuleChainName;
+        for (let i = 0 ; i < identifiers.length - 1; i ++) {
+          let name = new ModuleName(identifiers[i], identifiers[i + 1]);
           names.push(name);
         }
         return names;
@@ -189,16 +188,16 @@ export class Parsers {
     return parser;
   });
 
-  public static moduleSimpleName: Parser<ModuleSimpleName> = lazy(() => {
-    return Parsers.identifier;
+  public static moduleSimpleName: Parser<ModuleName> = lazy(() => {
+    return Parsers.identifier.map((identifier) => new ModuleName(identifier));
   });
 
-  public static moduleChainName: Parser<ModuleChainName> = lazy(() => {
+  public static moduleChainName: Parser<ModuleName> = lazy(() => {
     let parser = seq(
       Parsers.identifier,
       Parsimmon.string("=>").trim(Parsers.blank),
       Parsers.identifier
-    ).map(([first, , second]) => [first, second] as ModuleChainName);
+    ).map(([first, , second]) => new ModuleName(first, second));
     return parser;
   });
 

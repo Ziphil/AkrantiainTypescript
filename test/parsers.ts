@@ -113,14 +113,14 @@ describe("module chain", () => {
   test("simple", () => {
     let result = Parsers.moduleChain.tryParse(`%% A >> B >> C;`);
     expect(result).toBeInstanceOf(ModuleChain);
-    expect(result.modules.length).toBe(3);
-    expect(result.modules[1].name).toBe("B");
-    expect(result.modules[2].name).toBe("C");
+    expect(result.names.length).toBe(3);
+    expect(result.names[1].identifier.name).toBe("B");
+    expect(result.names[2].identifier.name).toBe("C");
   });
   test("complex", () => {
     let result = Parsers.moduleChain.tryParse(`%% A >> (foo => bar => baz) >> B >> no => paren => no => paren >> C >> D;`);
     console.log(result.toString());
     expect(result).toBeInstanceOf(ModuleChain);
-    expect(result.modules.length).toBe(9);
+    expect(result.names.length).toBe(9);
   });
 });

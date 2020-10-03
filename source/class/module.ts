@@ -7,9 +7,9 @@ import {
   Disjunction,
   Environment,
   EnvironmentName,
-  Identifier,
   Matchable,
   ModuleChain,
+  ModuleName,
   Rule,
   Stat
 } from ".";
@@ -68,8 +68,8 @@ export class Module {
   private convertByModuleChain(input: string, akrantiain: Akrantiain): string {
     let currentOutput = input;
     if (this.moduleChain !== undefined) {
-      for (let moduleName of this.moduleChain.modules) {
-        let module = akrantiain.findModule(moduleName);
+      for (let name of this.moduleChain.names) {
+        let module = akrantiain.findModule(name);
         if (module !== undefined) {
           currentOutput = module.convert(currentOutput, akrantiain);
         } else {
@@ -100,16 +100,6 @@ export class Module {
 
   public hasEnvironment(name: EnvironmentName): boolean {
     return this.environments.findIndex((environment) => environment.name === name) >= 0;
-  }
-
-  public static equalsModuleName(first: ModuleName, second: ModuleName): boolean {
-    if (first instanceof Identifier && second instanceof Identifier) {
-      return first.equals(second);
-    } else if (Array.isArray(first) && Array.isArray(second)) {
-      return first[0].equals(second[0]) && first[1].equals(second[1]);
-    } else {
-      return false;
-    }
   }
 
   public toString(indent: number = 0): string {
@@ -144,7 +134,4 @@ export class Module {
 }
 
 
-export type ModuleSimpleName = Identifier;
-export type ModuleChainName = [Identifier, Identifier];
-export type ModuleName = ModuleSimpleName | ModuleChainName;
 export type Sentence = Definition | Rule | Environment | ModuleChain;

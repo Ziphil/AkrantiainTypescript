@@ -41,7 +41,7 @@ export class Akrantiain {
 
   public findModule(name: ModuleName): Module | undefined {
     for (let module of this.explicitModules) {
-      if (module.name !== null && Module.equalsModuleName(module.name, name)) {
+      if (module.name !== null && module.name.equals(name)) {
         return module;
       }
     }
