@@ -1,6 +1,8 @@
 //
 
 import {
+  Akrantiain,
+  AkrantiainError,
   Definition,
   Disjunction,
   Environment,
@@ -8,7 +10,8 @@ import {
   Identifier,
   Matchable,
   ModuleChain,
-  Rule
+  Rule,
+  Stat
 } from ".";
 
 
@@ -37,6 +40,46 @@ export class Module {
     }
   }
 
+  // 与えられた文字列の変換を実行します。
+  public convert(input: string, akrantiain: Akrantiain): string {
+    let currentOutput = input;
+    currentOutput = this.convertByRule(currentOutput, akrantiain);
+    currentOutput = this.convertByModuleChain(currentOutput, akrantiain);
+    return currentOutput;
+  }
+
+  private convertByRule(input: string, akrantiain: Akrantiain): string {
+    if (this.rules.length > 0) {
+      let currentStat = Stat.create(input, this);
+      for (let rule of this.rules) {
+        currentStat = rule.apply(currentStat, this);
+      }
+      let invalidElements = currentStat.getInvalidElements(this);
+      if (invalidElements.length <= 0 || this.hasEnvironment("FALL_THROUGH")) {
+        return currentStat.createOutput(this);
+      } else {
+        throw new AkrantiainError(210, 1000, "No rules that can handle some characters", invalidElements);
+      }
+    } else {
+      return input;
+    }
+  }
+
+  private convertByModuleChain(input: string, akrantiain: Akrantiain): string {
+    let currentOutput = input;
+    if (this.moduleChain !== undefined) {
+      for (let moduleName of this.moduleChain.modules) {
+        let module = akrantiain.findModule(moduleName);
+        if (module !== undefined) {
+          currentOutput = module.convert(currentOutput, akrantiain);
+        } else {
+          throw new AkrantiainError(undefined, 2, "cannot happen (at Module#convertByModuleChain)");
+        }
+      }
+    }
+    return currentOutput;
+  }
+
   public findContent(name: string): Matchable | undefined {
     for (let definition of this.definitions) {
       if (definition.identifier.name === name) {
@@ -57,6 +100,16 @@ export class Module {
 
   public hasEnvironment(name: EnvironmentName): boolean {
     return this.environments.findIndex((environment) => environment.name === name) >= 0;
+  }
+
+  public static equalsModuleName(first: ModuleName, second: ModuleName): boolean {
+    if (first instanceof Identifier && second instanceof Identifier) {
+      return first.equals(second);
+    } else if (Array.isArray(first) && Array.isArray(second)) {
+      return first[0].equals(second[0]) && first[1].equals(second[1]);
+    } else {
+      return false;
+    }
   }
 
   public toString(indent: number = 0): string {

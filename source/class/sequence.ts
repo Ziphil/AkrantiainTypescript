@@ -49,6 +49,10 @@ export class Sequence implements Matchable {
     }
   }
 
+  public isConcrete(): boolean {
+    return this.matchables.length >= 2 || (this.matchables.length >= 1 && this.matchables[0].isConcrete());
+  }
+
   public toString(): string {
     let string = "";
     string += this.matchables.join(" ");

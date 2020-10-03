@@ -18,4 +18,7 @@ export interface Matchable {
   // マッチしなかった場合は -1 を返します。
   matchLeft(stat: Stat, to: number, module: Module): number;
 
+  // 変換先をもつならば true を返し、そうでなければ false を返します。
+  isConcrete(): boolean;
+
 }

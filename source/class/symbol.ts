@@ -67,6 +67,10 @@ export class Circumflex implements Matchable {
     return from;
   }
 
+  public isConcrete(): boolean {
+    return false;
+  }
+
   public toString(): string {
     return "^";
   }

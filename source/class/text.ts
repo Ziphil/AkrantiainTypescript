@@ -93,6 +93,10 @@ export class Quote implements Matchable {
     return from;
   }
 
+  public isConcrete(): boolean {
+    return true;
+  }
+
   public toString(): string {
     return `"${this.text}"`;
   }

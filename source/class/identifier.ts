@@ -36,6 +36,14 @@ export class Identifier implements Matchable {
     }
   }
 
+  public isConcrete(): boolean {
+    return true;
+  }
+
+  public equals(that: Identifier): boolean {
+    return this.name === that.name;
+  }
+
   public toString(): string {
     return this.name;
   }

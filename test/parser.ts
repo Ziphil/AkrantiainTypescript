@@ -17,8 +17,19 @@ import {
 } from "../source/parser/parsers";
 
 
-describe("Parsers", () => {
-  test("akrantiain", () => {
+describe("parsers", () => {
+  test("akrantiain: simple", () => {
+    let result = Parsers.akrantiain.tryParse(`
+      vowel = "a" | "e" | "i" | "o" | "u";
+      vowel -> /@/;
+    `.trim());
+    console.log(result.toString());
+    expect(result).toBeInstanceOf(Akrantiain);
+    expect(result.explicitModules.length).toBe(0);
+    expect(result.implicitModule.definitions.length).toBe(1);
+    expect(result.implicitModule.rules.length).toBe(1);
+  });
+  test("akrantiain: complex", () => {
     let result = Parsers.akrantiain.tryParse(`
       % foo => bar {
         def = "a" | "b" "c" | "d";
