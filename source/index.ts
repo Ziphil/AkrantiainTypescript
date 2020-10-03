@@ -1,8 +1,3 @@
 //
 
-
-function execute() {
-  console.log("executed");
-}
-
-execute();
+export * from "./class";

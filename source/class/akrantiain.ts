@@ -1,27 +1,62 @@
 //
 
 import {
-  Module
+  AkrantiainError,
+  Module,
+  ModuleName
 } from ".";
+import {
+  Parsers
+} from "../parser/parsers";
 
 
 export class Akrantiain {
 
-  public implicitModule: Module;
-  public modules: Array<Module>;
+  private implicitModule?: Module;
+  private explicitModules: Array<Module> = [];
 
-  public constructor(implicitModule: Module, modules: Array<Module>) {
-    this.implicitModule = implicitModule;
-    this.modules = modules;
+  public constructor(modules: Array<Module>) {
+    modules.forEach((module) => {
+      if (module.name === null) {
+        this.implicitModule = module;
+      } else {
+        this.explicitModules.push(module);
+      }
+    });
   }
 
-  public toString(indent: number = 0) {
+  public static load(source: string): Akrantiain {
+    let akrantiain = Parsers.akrantiain.tryParse(source);
+    return akrantiain;
+  }
+
+  // 暗黙モジュールから与えられた文字列の変換を実行します。
+  public convert(input: string): string {
+    if (this.implicitModule !== undefined) {
+      return this.implicitModule.convert(input, this);
+    } else {
+      throw new AkrantiainError(-1, 9003, "Cannot happen (at Akrantiain#convert)");
+    }
+  }
+
+  public findModule(name: ModuleName): Module | undefined {
+    for (let module of this.explicitModules) {
+      if (module.name !== null && module.name.equals(name)) {
+        return module;
+      }
+    }
+    return undefined;
+  }
+
+  public toString(indent: number = 0): string {
     let string = "";
-    string += this.implicitModule.toString(indent);
-    for (let modules of this.modules) {
-      string += modules.toString(indent);
+    if (this.implicitModule !== undefined) {
+      string += this.implicitModule.toString(indent);
+    }
+    for (let module of this.explicitModules) {
+      string += module.toString(indent);
     }
     return string;
   }
-  
+
 }
