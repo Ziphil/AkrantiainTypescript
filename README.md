@@ -14,6 +14,12 @@ Akrantiain is originally introduced in [this repository](https://github.com/sozy
 See here for further information about this language.
 
 This repository contains a TypeScript implementation of Akrantiain.
-Note that it is not completely compatible to the original one; especially it may run differently when an appropriate behavior is undefined in the original specification.
-It also extends the grammar of the language.
-The specification is now in preparation.
+Note that it is not completely compatible to the original one; especially it may run differently when a rule contains an empty string.
+It also extends the syntax and semantics of the language, whose documentation is now in preparation.
+
+## Usage
+Call `Akrantiain.load` with a source string to create an `Akrantiain` object, and then call `convert` with an input string:
+```typescript
+let akrantiain = Akrantiain.load(`"a" -> /X/; "b" -> /Y/; "c" -> /Z/;`);
+let output = akrantiain.convert("abc");
+console.log(output)  // outputs “XYZ”
