@@ -50,7 +50,7 @@ export class ModuleChain {
 
   public toString(): string {
     let string = "";
-    string += this.names.join(" >> ");
+    string +=  `%% ${this.names.join(" >> ")};`;
     return string;
   }
 

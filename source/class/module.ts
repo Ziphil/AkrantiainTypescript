@@ -125,7 +125,7 @@ export class Module {
     }
     if (this.moduleChain) {
       string += " ".repeat(indent + 2) + "module chain:\n";
-      string += " ".repeat(indent + 4) + `%% ${this.moduleChain};\n`;
+      string += " ".repeat(indent + 4) + `${this.moduleChain}\n`;
     }
     string += " ".repeat(indent) + "}\n";
     return string;
