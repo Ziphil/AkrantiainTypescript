@@ -1,11 +1,11 @@
 //
 
 import {
+  Identifier,
   Matchable,
   Module,
   Stat
 } from ".";
-import { Identifier } from "./identifier";
 
 
 export class Sequence implements Matchable {

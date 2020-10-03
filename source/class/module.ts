@@ -195,21 +195,21 @@ export class Module {
     string += " ".repeat(indent) + `% ${this.name ?? "<implicit>"} {\n`;
     if (this.definitions.length > 0) {
       string += " ".repeat(indent + 2) + "definitions:\n";
-      this.definitions.forEach((definition) => {
+      for (let definition of this.definitions) {
         string += " ".repeat(indent + 4) + `${definition}\n`;
-      });
+      }
     }
     if (this.rules.length > 0) {
       string += " ".repeat(indent + 2) + "rules:\n";
-      this.rules.forEach((rule) => {
+      for (let rule of this.rules) {
         string += " ".repeat(indent + 4) + `${rule}\n`;
-      });
+      }
     }
     if (this.environments.length > 0) {
       string += " ".repeat(indent + 2) + "environments:\n";
-      this.environments.forEach((environment) => {
+      for (let environment of this.environments) {
         string += " ".repeat(indent + 4) + `${environment}\n`;
-      });
+      }
     }
     if (this.moduleChain) {
       string += " ".repeat(indent + 2) + "module chain:\n";
