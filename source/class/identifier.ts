@@ -22,7 +22,7 @@ export class Identifier implements Matchable {
       let to = content.matchRight(stat, from, module);
       return to;
     } else {
-      throw new AkrantiainError(-1, 9000, "Cannot happen (at Identifier#matchRight)");
+      throw new AkrantiainError(9000, -1, "Cannot happen (at Identifier#matchRight)");
     }
   }
 
@@ -32,7 +32,7 @@ export class Identifier implements Matchable {
       let from = content.matchLeft(stat, to, module);
       return from;
     } else {
-      throw new AkrantiainError(-1, 9001, "Cannot happen (at Identifier#matchLeft)");
+      throw new AkrantiainError(9001, -1, "Cannot happen (at Identifier#matchLeft)");
     }
   }
 

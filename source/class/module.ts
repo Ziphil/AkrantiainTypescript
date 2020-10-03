@@ -58,7 +58,7 @@ export class Module {
       if (invalidElements.length <= 0 || this.hasEnvironment("FALL_THROUGH")) {
         return currentStat.createOutput(this);
       } else {
-        throw new AkrantiainError(210, 2000, "No rules that can handle some characters", invalidElements);
+        throw new AkrantiainError(2000, 210, "No rules that can handle some characters", invalidElements);
       }
     } else {
       return input;
@@ -73,7 +73,7 @@ export class Module {
         if (module !== undefined) {
           currentOutput = module.convert(currentOutput, akrantiain);
         } else {
-          throw new AkrantiainError(-1, 9002, "Cannot happen (at Module#convertByModuleChain)");
+          throw new AkrantiainError(9002, -1, "Cannot happen (at Module#convertByModuleChain)");
         }
       }
     }

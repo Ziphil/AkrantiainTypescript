@@ -16,13 +16,25 @@ export class Akrantiain {
   private explicitModules: Array<Module> = [];
 
   public constructor(modules: Array<Module>) {
-    modules.forEach((module) => {
+    for (let module of modules) {
       if (module.name === null) {
-        this.implicitModule = module;
+        if (this.implicitModule === undefined) {
+          this.implicitModule = module;
+        } else {
+          throw new AkrantiainError(1001, -1, "There are more than one implicit modules");
+        }
       } else {
-        this.explicitModules.push(module);
+        let duplicated = this.explicitModules.findIndex((existingModule) => existingModule.name!.equals(module.name!));
+        if (!duplicated) {
+          this.explicitModules.push(module);
+        } else {
+          throw new AkrantiainError(1002, 1113, `Duplicate definition of modules: ${module.name}`);
+        }
       }
-    });
+    }
+    if (this.implicitModule === undefined) {
+      throw new AkrantiainError(1000, -1, "No implicit module");
+    }
   }
 
   public static load(source: string): Akrantiain {
@@ -35,7 +47,7 @@ export class Akrantiain {
     if (this.implicitModule !== undefined) {
       return this.implicitModule.convert(input, this);
     } else {
-      throw new AkrantiainError(-1, 9003, "Cannot happen (at Akrantiain#convert)");
+      throw new AkrantiainError(9003, -1, "Cannot happen (at Akrantiain#convert)");
     }
   }
 
