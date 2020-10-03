@@ -37,6 +37,15 @@ export class Module {
     }
   }
 
+  public findContent(name: string): Matchable | undefined {
+    for (let definition of this.definitions) {
+      if (definition.identifier.name === name) {
+        return definition.content;
+      }
+    }
+    return undefined;
+  }
+
   public findPunctuationContent(): Matchable {
     for (let definition of this.definitions) {
       if (definition.identifier.name === "PUNCTUATION") {

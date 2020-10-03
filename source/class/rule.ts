@@ -9,10 +9,10 @@ import {
 
 export class Rule {
 
-  public selections: Array<Matchable>;
-  public leftCondition?: Matchable;
-  public rightCondition?: Matchable;
-  public phonemes: Array<Phoneme>;
+  private selections: Array<Matchable>;
+  private leftCondition?: Matchable;
+  private rightCondition?: Matchable;
+  private phonemes: Array<Phoneme>;
 
   public constructor(ruleLeft: RuleLeft, ruleRight: RuleRight) {
     this.selections = ruleLeft.selections;

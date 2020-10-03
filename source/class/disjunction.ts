@@ -18,11 +18,39 @@ export class Disjunction implements Matchable {
   }
 
   public matchRight(stat: Stat, from: number, module: Module): number {
-    return -1;
+    let to = -1;
+    if (this.matchables.length > 0) {
+      for (let matchable of this.matchables.reverse()) {
+        let singleTo = matchable.matchRight(stat, from, module);
+        if (singleTo >= 0) {
+          to = singleTo;
+          break;
+        }
+      }
+    }
+    if (this.negated) {
+      return (to === -1) ? from : -1;
+    } else {
+      return to;
+    }
   }
 
   public matchLeft(stat: Stat, to: number, module: Module): number {
-    return -1;
+    let from = -1;
+    if (this.matchables.length > 0) {
+      for (let matchable of this.matchables.reverse()) {
+        let singleFrom = matchable.matchLeft(stat, to, module);
+        if (singleFrom >= 0) {
+          from = singleFrom;
+          break;
+        }
+      }
+    }
+    if (this.negated) {
+      return (from === -1) ? to : -1;
+    } else {
+      return from;
+    }
   }
 
   public toString(): string {

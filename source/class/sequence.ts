@@ -16,11 +16,37 @@ export class Sequence implements Matchable {
   }
 
   public matchRight(stat: Stat, from: number, module: Module): number {
-    return -1;
+    if (this.matchables.length > 0) {
+      let pointer = from;
+      for (let matchable of this.matchables) {
+        let to = matchable.matchRight(stat, pointer, module);
+        if (to >= 0) {
+          pointer = to;
+        } else {
+          return -1;
+        }
+      }
+      return pointer;
+    } else {
+      return -1;
+    }
   }
 
   public matchLeft(stat: Stat, to: number, module: Module): number {
-    return -1;
+    if (this.matchables.length > 0) {
+      let pointer = to;
+      for (let matchable of this.matchables.reverse()) {
+        let from = matchable.matchLeft(stat, pointer, module);
+        if (from >= 0) {
+          pointer = from;
+        } else {
+          return -1;
+        }
+      }
+      return pointer;
+    } else {
+      return -1;
+    }
   }
 
   public toString(): string {
