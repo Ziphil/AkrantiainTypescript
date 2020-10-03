@@ -6,13 +6,12 @@
     "target": "es5",
     "lib": ["es2015", "esnext", "dom"],
     "moduleResolution": "node",
-    "sourceMap": true,
+    "declaration": true,
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
-    "declaration": true,
     "removeComments": true
   },
   "include": [
