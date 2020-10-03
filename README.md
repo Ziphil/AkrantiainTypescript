@@ -17,8 +17,14 @@ This repository contains a TypeScript implementation of Akrantiain.
 Note that it is not completely compatible to the original one; especially it may run differently when a rule contains an empty string.
 It also extends the syntax and semantics of the language, whose documentation is now in preparation.
 
+## Installation
+Install via [npm](https://www.npmjs.com/package/akrantiain).
+```
+npm i akrantiain
+```
+
 ## Usage
-Call `Akrantiain.load` with a source string to create an `Akrantiain` object, and then call `convert` with an input string:
+Call `Akrantiain.load` with a source string to create an `Akrantiain` object, and then call `convert` with an input string.
 ```typescript
 const {Akrantiain} = require("akrantiain");
 
@@ -26,7 +32,3 @@ let akrantiain = Akrantiain.load(`"a" -> /X/; "b" -> /Y/; "c" -> /Z/;`);
 let output = akrantiain.convert("abc");
 console.log(output)  // outputs “XYZ”
 ```
-
-## Current status
-Currently exception handling and checking is not yet implemented.
-If you pass an erroneous source to an `Akrantiain` object (such as that containing use of undefined identifiers or circular module references), it may show weird behaviour.
