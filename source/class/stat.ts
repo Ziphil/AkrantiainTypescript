@@ -38,7 +38,7 @@ export class Stat {
     for (let i = from ; i < to ; i ++) {
       part += this.elements[i].part;
     }
-    let columnNumber = (from < this.elements.length) ? this.elements[from].columnNumber : this.elements[-1].columnNumber;
+    let columnNumber = (from < this.elements.length) ? this.elements[from].columnNumber : this.elements[this.elements.length - 1].columnNumber;
     let element = new StatElement(part, null, columnNumber);
     return element;
   }
