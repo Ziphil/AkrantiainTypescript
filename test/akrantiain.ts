@@ -22,6 +22,24 @@ describe("normal", () => {
     expect(akrantiain.convert("AbC aBc")).toBe("XYZ XYZ");
     expect(akrantiain.convert("ЖшΘψ жШθΨ")).toBe("1234 1234");
   });
+  test("case sensitive", () => {
+    let akrantiain = Akrantiain.load(`
+      @CASE_SENSITIVE
+      "A" -> /X/; "b" -> /Y/; "C" -> /Z/;
+    `);
+    expect(akrantiain.convert("AbC")).toBe("XYZ");
+    expect(() => akrantiain.convert("a")).toThrow();
+  });
+  test("comment", () => {
+    let akrantiain = Akrantiain.load(`
+      "a" -> /X/; # comment
+      # comment comment
+      "b" -> /Y/;#comment
+      # "c" -> /Z/;
+    `);
+    expect(akrantiain.convert("abab")).toBe("XYXY");
+    expect(() => akrantiain.convert("c")).toThrow();
+  });
   test("simple module", () => {
     let akrantiain = Akrantiain.load(`
       % upper {
@@ -205,6 +223,18 @@ describe("error", () => {
     } catch (error) {
       expect(error.name).toBe("AkrantiainError");
       expect(error.code).toBe(1105);
+    }
+  });
+  test("no rule", () => {
+    expect.assertions(2);
+    try {
+      let akrantiain = Akrantiain.load(`
+        "a" -> /X/; "b" -> /Y/; "c" -> /Z/;
+      `);
+      akrantiain.convert("d");
+    } catch (error) {
+      expect(error.name).toBe("AkrantiainError");
+      expect(error.code).toBe(2000);
     }
   });
 });
