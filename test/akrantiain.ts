@@ -30,6 +30,21 @@ describe("normal", () => {
     expect(akrantiain.convert("AbC")).toBe("XYZ");
     expect(() => akrantiain.convert("a")).toThrow();
   });
+  test("diacritic", () => {
+    let akrantiain = Akrantiain.load(`
+      ("ë" | "ä") -> /S/;  # single
+      ("ë" | "ä") -> /C/;  # combining
+    `);
+    expect(akrantiain.convert("ëäëäëä ëäëäëä")).toBe("SSSSSS CCCCCC");
+  });
+  test("diacritic (nfd)", () => {
+    let akrantiain = Akrantiain.load(`
+      @USE_NFD;
+      ("ë" | "ä") -> /S/;  # single
+      ("ë" | "ä") -> /C/;  # combining
+    `);
+    expect(akrantiain.convert("ëäëäëä ëäëäëä")).toBe("SSSSSS SSSSSS");
+  });
   test("comment", () => {
     let akrantiain = Akrantiain.load(`
       "a" -> /X/; # comment
@@ -236,6 +251,32 @@ describe("error", () => {
       expect(error.name).toBe("AkrantiainError");
       expect(error.code).toBe(2000);
     }
+  });
+});
+
+describe("suspicious behaviour", () => {
+  test("aimez", () => {
+    let akrantiain = Akrantiain.load(`
+      "ez" ^ -> /e/;
+      "ai" -> /ɛ/;
+      "m" ("a" | "e" | "i" | "o" | "u" | "y") -> /m/ $
+    `);
+    expect(akrantiain.convert("aimez")).toBe("ɛme");
+  });
+  test("empty string 1", () => {
+    let akrantiain = Akrantiain.load(`
+      "" -> /X/; "a" -> /A/
+    `);
+    expect(akrantiain.convert("aaa a aa")).toBe("XAXAXAX XAX XAXAX");
+  });
+  test("empty string 2", () => {
+    let akrantiain = Akrantiain.load(`
+      "" "n" -> /c/ $
+      "" "n" -> /b/ $
+      "n" -> /n/
+    `);
+    expect(akrantiain.convert("nnn nnn nnnn nn")).toBe("bcbnbcbnbcbn bcbnbcbnbcbn bcbnbcbnbcbnbcbn bcbnbcbn");
+    expect(akrantiain.convert("n n n n nnn nnn")).toBe("bcbn bcbn bcbn bcbn bcbnbcbnbcbn bcbnbcbnbcbn");
   });
 });
 

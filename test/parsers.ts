@@ -63,8 +63,6 @@ describe("rule", () => {
     let result = Parsers.rule.tryParse(`"u" "g" !vowel -> /u/ /w/;`);
     expect(result).toBeInstanceOf(Rule);
     expect(result.selections.length).toBe(2);
-    expect(result.leftCondition).toBe(undefined);
-    expect(result.rightCondition).toBeInstanceOf(Disjunction);
     expect(result.phonemes.length).toBe(2);
     expect(result.phonemes[1]).toBeInstanceOf(Slash);
     expect(result.phonemes[1].text).toBe("w");
@@ -76,6 +74,26 @@ describe("rule", () => {
   test("complex", () => {
     let result = Parsers.rule.tryParse(`!left some ^ ("com" pl | "ex") exam "ple" ^ !("r" | "i" "\\"g\\""| ht) -> /m/ $ /\\/5\\// $;`);
     expect(result).toBeInstanceOf(Rule);
+  });
+  test("normalize simple 1", () => {
+    let result = Parsers.rule.tryParse(`"a" "b" "c" "d" "e" "f" -> $ $ /c/ /d/ /e/ $;`);
+    expect(result.toString()).toBe(`["a" "b"] "c" "d" "e" ["f"] -> /c/ /d/ /e/;`);
+  });
+  test("normalize simple 2", () => {
+    let result = Parsers.rule.tryParse(`a "b" "c" -> $ $ /c/;`);
+    expect(result.toString()).toBe(`[a "b"] "c" -> /c/;`);
+  });
+  test("normalize simple 3", () => {
+    let result = Parsers.rule.tryParse(`a "b" "c" -> /a/ /b/ $;`);
+    expect(result.toString()).toBe(`a "b" ["c"] -> /a/ /b/;`);
+  });
+  test("normalize circumplex", () => {
+    let result = Parsers.rule.tryParse(`"a" ^ ^ "b" ^ "c" ^ "d" ^ "e" "f" ^ "g" -> $ $ /c/ /d/ $ $ $;`);
+    expect(result.toString()).toBe(`["a" ^ ^ "b" ^] "c" ^ "d" [^ "e" "f" ^ "g"] -> /c/ /d/;`);
+  });
+  test("normalize complex", () => {
+    let result = Parsers.rule.tryParse(`!"l" "a" ^ ^ "b" ^ "c" ^ "d" ^ "e" "f" ^ "g" !"r" -> $ $ /c/ /d/ $ $ $;`);
+    expect(result.toString()).toBe(`[!("l") "a" ^ ^ "b" ^] "c" ^ "d" [^ "e" "f" ^ "g" !("r")] -> /c/ /d/;`);
   });
 });
 
