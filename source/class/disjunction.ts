@@ -11,7 +11,7 @@ import {
 export class Disjunction implements Matchable {
 
   public matchables: Array<Matchable>;
-  public negated: boolean;
+  private negated: boolean;
 
   public constructor(matchables: Array<Matchable>, negated: boolean = false) {
     this.matchables = matchables;
@@ -19,16 +19,19 @@ export class Disjunction implements Matchable {
   }
 
   public matchRight(stat: Stat, from: number, module: Module): number {
-    let to = -1;
-    if (this.matchables.length > 0) {
-      for (let matchable of this.matchables.reverse()) {
-        let singleTo = matchable.matchRight(stat, from, module);
-        if (singleTo >= 0) {
-          to = singleTo;
-          break;
+    let to = (() => {
+      if (this.matchables.length > 0) {
+        for (let matchable of this.matchables.slice().reverse()) {
+          let singleTo = matchable.matchRight(stat, from, module);
+          if (singleTo >= 0) {
+            return singleTo;
+          }
         }
+        return -1;
+      } else {
+        return -1;
       }
-    }
+    })();
     if (this.negated) {
       return (to === -1) ? from : -1;
     } else {
@@ -37,16 +40,19 @@ export class Disjunction implements Matchable {
   }
 
   public matchLeft(stat: Stat, to: number, module: Module): number {
-    let from = -1;
-    if (this.matchables.length > 0) {
-      for (let matchable of this.matchables.reverse()) {
-        let singleFrom = matchable.matchLeft(stat, to, module);
-        if (singleFrom >= 0) {
-          from = singleFrom;
-          break;
+    let from = (() => {
+      if (this.matchables.length > 0) {
+        for (let matchable of this.matchables.slice().reverse()) {
+          let singleFrom = matchable.matchLeft(stat, to, module);
+          if (singleFrom >= 0) {
+            return singleFrom;
+          }
         }
+        return -1;
+      } else {
+        return -1;
       }
-    }
+    })();
     if (this.negated) {
       return (from === -1) ? to : -1;
     } else {

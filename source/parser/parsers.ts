@@ -44,7 +44,7 @@ export class Parsers {
   });
 
   public static implicitModule: Parser<Module> = lazy(() => {
-    let parser = Parsers.sentence.atLeast(1).map((sentences) => new Module(null, sentences));
+    let parser = Parsers.sentences.map((sentences) => new Module(null, sentences));
     return parser;
   });
 
@@ -53,14 +53,22 @@ export class Parsers {
       seq(Parsimmon.string("%"), Parsers.blank),
       Parsers.moduleName,
       seq(Parsers.blankOrBreak, Parsimmon.string("{"), Parsers.blankOrBreak),
-      Parsers.sentence.many(),
+      Parsers.sentences,
       seq(Parsers.blankOrBreak, Parsimmon.string("}"))
     ).map(([, name, , sentences]) => new Module(name, sentences));
     return parser;
   });
 
-  public static sentence: Parser<Sentence> = lazy(() => {
-    let parser = alt(Parsers.definition, Parsers.rule, Parsers.environment, Parsers.moduleChain);
+  public static sentences: Parser<Array<Sentence>> = lazy(() => {
+    let parser = Parsers.sentence.atLeast(1).map((sentences) => {
+      let filteredSentences = sentences.filter((sentence) => sentence !== null) as Array<Sentence>;
+      return filteredSentences;
+    });
+    return parser;
+  });
+
+  public static sentence: Parser<Sentence | null> = lazy(() => {
+    let parser = alt(Parsers.definition, Parsers.rule, Parsers.environment, Parsers.moduleChain, Parsers.comment);
     return parser;
   });
 
@@ -96,7 +104,7 @@ export class Parsers {
   });
 
   public static ruleRight: Parser<RuleRight> = lazy(() => {
-    let elementParser = alt(Parsers.slash, Parsers.dollar);
+    let elementParser = alt(Parsers.quote, Parsers.slash, Parsers.dollar);
     let parser = elementParser.sepBy1(Parsers.blank);
     return parser;
   });
@@ -261,11 +269,21 @@ export class Parsers {
     return parser;
   });
 
+  public static comment: Parser<null> = lazy(() => {
+    let parser = seq(
+      Parsimmon.string("#"),
+      Parsimmon.noneOf("\n").many(),
+      Parsers.blankOrBreak
+    ).result(null);
+    return parser;
+  });
+
   // 文末の (省略されているかもしれない) セミコロンおよびその後の (改行を含む) スペースをパースします。
   public static semicolon: Parser<null> = lazy(() => {
     let semicolonParser = seq(Parsimmon.string(";"), Parsers.blankOrBreak);
     let breakParser = seq(Parsers.break, Parsers.blankOrBreak);
-    let parser = alt(semicolonParser, breakParser).result(null);
+    let otherParser = Parsimmon.lookahead(alt(Parsimmon.string("#"), Parsimmon.string("}"), Parsimmon.eof));
+    let parser = alt(semicolonParser, breakParser, otherParser).result(null);
     return parser;
   });
 

@@ -29,14 +29,14 @@ export class Sequence implements Matchable {
       }
       return pointer;
     } else {
-      return -1;
+      return from;
     }
   }
 
   public matchLeft(stat: Stat, to: number, module: Module): number {
     if (this.matchables.length > 0) {
       let pointer = to;
-      for (let matchable of this.matchables.reverse()) {
+      for (let matchable of this.matchables.slice().reverse()) {
         let from = matchable.matchLeft(stat, pointer, module);
         if (from >= 0) {
           pointer = from;
@@ -46,7 +46,7 @@ export class Sequence implements Matchable {
       }
       return pointer;
     } else {
-      return -1;
+      return to;
     }
   }
 
