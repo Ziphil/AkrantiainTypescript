@@ -93,6 +93,12 @@ describe("extension", () => {
     expect(akrantiain.convert("saei saa souu")).toBe("before3 before2 before3");
     expect(akrantiain.convert("ta tei tuao")).toBe("not2[1] not3[2] T[3]");
   });
+  test("right-hand quote", () => {
+    let akrantiain = Akrantiain.load(`
+      "a" -> "X"; "b" -> "Y";
+    `);
+    expect(akrantiain.convert("aba")).toBe("XYX");
+  });
 });
 
 describe("error", () => {

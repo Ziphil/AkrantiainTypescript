@@ -104,7 +104,7 @@ export class Parsers {
   });
 
   public static ruleRight: Parser<RuleRight> = lazy(() => {
-    let elementParser = alt(Parsers.slash, Parsers.dollar);
+    let elementParser = alt(Parsers.quote, Parsers.slash, Parsers.dollar);
     let parser = elementParser.sepBy1(Parsers.blank);
     return parser;
   });

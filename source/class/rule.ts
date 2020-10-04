@@ -6,6 +6,7 @@ import {
   Identifier,
   Matchable,
   Module,
+  Quote,
   Sequence,
   Slash,
   Stat,
@@ -85,7 +86,7 @@ export class Rule {
       if (to >= 0) {
         if (selection.isConcrete()) {
           let phoneme = this.phonemes[phonemeIndex];
-          if (phoneme instanceof Slash) {
+          if (phoneme instanceof Quote || phoneme instanceof Slash) {
             if (group.isNoneConverted(pointer, to)) {
               let addedElement = group.merge(pointer, to);
               addedElement.result = phoneme.text;
@@ -97,6 +98,8 @@ export class Rule {
             for (let i = pointer ; i < to ; i ++) {
               addedElements.push(group.elements[i]);
             }
+          } else {
+            throw new Error("This cannot happen");
           }
           phonemeIndex ++;
         } else {
@@ -274,6 +277,6 @@ export class Rule {
 
 export type RuleLeft = {selections: Array<Matchable>, leftCondition?: Matchable, rightCondition?: Matchable};
 export type RuleRight = Array<Phoneme>;
-export type Phoneme = Slash | Dollar;
+export type Phoneme = Quote | Slash | Dollar;
 
 type RuleResult = {addedElements: Array<StatElement>, to: number};
