@@ -21,7 +21,7 @@ export class Disjunction implements Matchable {
   public matchRight(stat: Stat, from: number, module: Module): number {
     let to = -1;
     if (this.matchables.length > 0) {
-      for (let matchable of this.matchables.reverse()) {
+      for (let matchable of this.matchables.slice().reverse()) {
         let singleTo = matchable.matchRight(stat, from, module);
         if (singleTo >= 0) {
           to = singleTo;
@@ -39,7 +39,7 @@ export class Disjunction implements Matchable {
   public matchLeft(stat: Stat, to: number, module: Module): number {
     let from = -1;
     if (this.matchables.length > 0) {
-      for (let matchable of this.matchables.reverse()) {
+      for (let matchable of this.matchables.slice().reverse()) {
         let singleFrom = matchable.matchLeft(stat, to, module);
         if (singleFrom >= 0) {
           from = singleFrom;
