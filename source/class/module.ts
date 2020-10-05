@@ -92,7 +92,7 @@ export class Module {
   }
 
   // 識別子定義文や変換規則定義文でモジュール内に存在しない識別子を参照していないかチェックします。
-  public checkUnknownIdentifier(): void {
+  private checkUnknownIdentifier(): void {
     for (let definition of this.definitions) {
       let identifier = definition.findUnknownIdentifier(this);
       if (identifier !== undefined) {
@@ -108,7 +108,7 @@ export class Module {
   }
 
   // 識別子定義文で識別子が循環参照していないかチェックします。
-  public checkCircularIdentifier(): void {
+  private checkCircularIdentifier(): void {
     for (let definition of this.definitions) {
       let identifier = definition.findCircularIdentifier([], this);
       if (identifier !== undefined) {
