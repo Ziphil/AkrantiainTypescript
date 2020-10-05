@@ -38,7 +38,8 @@ export class Parsers {
     let parser = seq(
       Parsers.blankOrBreak,
       alt(Parsers.implicitModule, Parsers.explicitModule).sepBy(Parsers.blankOrBreak),
-      Parsers.blankOrBreak
+      Parsers.blankOrBreak,
+      Parsimmon.eof
     ).map(([, modules]) => new Akrantiain(modules));
     return parser;
   });

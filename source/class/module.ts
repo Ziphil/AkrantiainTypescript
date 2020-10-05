@@ -28,7 +28,7 @@ export class Module {
     this.name = name;
     for (let sentence of sentences) {
       if (sentence instanceof ModuleChain) {
-        if (this.definitions.length > 0 || this.rules.length > 0 || this.environments.length > 0) {
+        if (this.definitions.length > 0 || this.rules.length > 0) {
           throw new AkrantiainError(1005, -1, `Module has both sentences and a module chain: '${name}'`);
         }
       } else {
@@ -51,7 +51,11 @@ export class Module {
       } else if (sentence instanceof Environment) {
         this.environments.push(sentence);
       } else if (sentence instanceof ModuleChain) {
-        this.moduleChain = sentence;
+        if (this.moduleChain === undefined) {
+          this.moduleChain = sentence;
+        } else {
+          throw new AkrantiainError(1006, -1, `Module has multiple module chains: '${name}'`);
+        }
       } else {
         throw new Error("This cannot happen");
       }

@@ -187,6 +187,19 @@ describe("errors", () => {
       expect(error.code).toBe(1005);
     }
   });
+  test("mutiple module chains", () => {
+    expect.assertions(2);
+    try {
+      let akrantiain = Akrantiain.load(`
+        % module { "a" -> /A/; }
+        %% module;
+        %% module;
+      `);
+    } catch (error) {
+      expect(error.name).toBe("AkrantiainError");
+      expect(error.code).toBe(1006);
+    }
+  });
   test("unresolved identifier (in definition)", () => {
     expect.assertions(2);
     try {
