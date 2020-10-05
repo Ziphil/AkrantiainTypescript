@@ -27,6 +27,15 @@ export class Module {
   public constructor(name: ModuleName | null, sentences: Array<Sentence>) {
     this.name = name;
     for (let sentence of sentences) {
+      if (sentence instanceof ModuleChain) {
+        if (this.definitions.length > 0 || this.rules.length > 0 || this.environments.length > 0) {
+          throw new AkrantiainError(1005, -1, `Module has both sentences and a module chain: '${name}'`);
+        }
+      } else {
+        if (this.moduleChain !== undefined) {
+          throw new AkrantiainError(1005, -1, `Module has both sentences and a module chain: '${name}'`);
+        }
+      }
       if (sentence instanceof Definition) {
         let duplicatedIndex = this.definitions.findIndex((definition) => {
           let castSentence = sentence as Definition;

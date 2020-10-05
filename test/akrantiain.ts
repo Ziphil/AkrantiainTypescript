@@ -101,7 +101,7 @@ describe("extension", () => {
   });
 });
 
-describe("error", () => {
+describe("errors", () => {
   test("unresolved module name", () => {
     expect.assertions(2);
     try {
@@ -169,6 +169,22 @@ describe("error", () => {
     } catch (error) {
       expect(error.name).toBe("AkrantiainError");
       expect(error.code).toBe(1004);
+    }
+  });
+  test("module chain and sentences", () => {
+    expect.assertions(2);
+    try {
+      let akrantiain = Akrantiain.load(`
+        % error {
+          "a" -> /A/;
+          %% dummy;
+        }
+        % dummy { "x" -> /X/; }
+        %% error;
+      `);
+    } catch (error) {
+      expect(error.name).toBe("AkrantiainError");
+      expect(error.code).toBe(1005);
     }
   });
   test("unresolved identifier (in definition)", () => {
@@ -260,7 +276,7 @@ describe("error", () => {
   });
 });
 
-describe("suspicious behaviour", () => {
+describe("suspicious behaviours", () => {
   test("aimez", () => {
     let akrantiain = Akrantiain.load(`
       "ez" ^ -> /e/;
