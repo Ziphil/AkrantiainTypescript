@@ -54,7 +54,7 @@ export class Akrantiain {
   }
 
   // モジュールチェーン文で存在しないモジュールを参照していないかチェックします。
-  public checkUnknownModuleName(): void {
+  private checkUnknownModuleName(): void {
     let modules = [...this.explicitModules, this.implicitModule!];
     for (let module of modules) {
       let name = module.findUnknownModuleName(this);
@@ -66,7 +66,7 @@ export class Akrantiain {
 
   // モジュールチェーン文でモジュールが循環参照していないかチェックします。
   // このメソッドは暗黙モジュールから参照されているもののみを調べるので、参照されていない明示モジュールの中での循環参照は検査しません。
-  public checkCircularModuleName(): void {
+  private checkCircularModuleName(): void {
     let name = this.implicitModule!.findCircularModuleName([], this);
     if (name !== undefined) {
       throw new AkrantiainError(1001, 1112, `Circular reference involving module: '${name}'`);

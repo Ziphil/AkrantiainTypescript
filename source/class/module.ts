@@ -27,6 +27,15 @@ export class Module {
   public constructor(name: ModuleName | null, sentences: Array<Sentence>) {
     this.name = name;
     for (let sentence of sentences) {
+      if (sentence instanceof ModuleChain) {
+        if (this.definitions.length > 0 || this.rules.length > 0) {
+          throw new AkrantiainError(1005, -1, `Module has both sentences and a module chain: '${name}'`);
+        }
+      } else {
+        if (this.moduleChain !== undefined) {
+          throw new AkrantiainError(1005, -1, `Module has both sentences and a module chain: '${name}'`);
+        }
+      }
       if (sentence instanceof Definition) {
         let duplicatedIndex = this.definitions.findIndex((definition) => {
           let castSentence = sentence as Definition;
@@ -42,7 +51,11 @@ export class Module {
       } else if (sentence instanceof Environment) {
         this.environments.push(sentence);
       } else if (sentence instanceof ModuleChain) {
-        this.moduleChain = sentence;
+        if (this.moduleChain === undefined) {
+          this.moduleChain = sentence;
+        } else {
+          throw new AkrantiainError(1006, -1, `Module has multiple module chains: '${name}'`);
+        }
       } else {
         throw new Error("This cannot happen");
       }
@@ -92,27 +105,27 @@ export class Module {
   }
 
   // 識別子定義文や変換規則定義文でモジュール内に存在しない識別子を参照していないかチェックします。
-  public checkUnknownIdentifier(): void {
+  private checkUnknownIdentifier(): void {
     for (let definition of this.definitions) {
       let identifier = definition.findUnknownIdentifier(this);
       if (identifier !== undefined) {
-        throw new AkrantiainError(1100, -1, `Unresolved identifier: '${identifier.name}' in '${definition}'`);
+        throw new AkrantiainError(1100, -1, `Unresolved identifier: '${identifier.text}' in '${definition}'`);
       }
     }
     for (let rule of this.rules) {
       let identifier = rule.findUnknownIdentifier(this);
       if (identifier !== undefined) {
-        throw new AkrantiainError(1101, 335, `Unresolved identifier: '${identifier.name}' in '${rule}'`);
+        throw new AkrantiainError(1101, 335, `Unresolved identifier: '${identifier.text}' in '${rule}'`);
       }
     }
   }
 
   // 識別子定義文で識別子が循環参照していないかチェックします。
-  public checkCircularIdentifier(): void {
+  private checkCircularIdentifier(): void {
     for (let definition of this.definitions) {
       let identifier = definition.findCircularIdentifier([], this);
       if (identifier !== undefined) {
-        throw new AkrantiainError(1102, -1, `Circular reference involving identifier: '${identifier.name}' in '${definition}'`);
+        throw new AkrantiainError(1102, -1, `Circular reference involving identifier: '${identifier.text}' in '${definition}'`);
       }
     }
   }
@@ -175,7 +188,7 @@ export class Module {
 
   public findPunctuationContent(): Matchable {
     for (let definition of this.definitions) {
-      if (definition.identifier.name === "PUNCTUATION") {
+      if (definition.identifier.text === "PUNCTUATION") {
         return definition.content;
       }
     }

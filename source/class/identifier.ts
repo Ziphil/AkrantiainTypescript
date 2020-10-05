@@ -10,10 +10,10 @@ import {
 
 export class Identifier implements Matchable {
 
-  public name: string;
+  public text: string;
 
-  public constructor(name: string) {
-    this.name = name;
+  public constructor(text: string) {
+    this.text = text;
   }
 
   public matchRight(stat: Stat, from: number, module: Module): number {
@@ -63,11 +63,11 @@ export class Identifier implements Matchable {
   }
 
   public equals(that: Identifier): boolean {
-    return this.name === that.name;
+    return this.text === that.text;
   }
 
   public toString(): string {
-    return this.name;
+    return this.text;
   }
 
 }

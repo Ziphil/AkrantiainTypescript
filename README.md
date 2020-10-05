@@ -32,3 +32,6 @@ let akrantiain = Akrantiain.load(`"a" -> /X/; "b" -> /Y/; "c" -> /Z/;`);
 let output = akrantiain.convert("abc");
 console.log(output)  // outputs “XYZ”
 ```
+
+## Documentations
+- [Error messages](document/error.md)

@@ -128,8 +128,8 @@ describe("module chain", () => {
     let result = Parsers.moduleChain.tryParse(`%% A >> B >> C;`);
     expect(result).toBeInstanceOf(ModuleChain);
     expect(result.names.length).toBe(3);
-    expect(result.names[1].identifier.name).toBe("B");
-    expect(result.names[2].identifier.name).toBe("C");
+    expect(result.names[1].text).toBe("B");
+    expect(result.names[2].text).toBe("C");
   });
   test("complex", () => {
     let result = Parsers.moduleChain.tryParse(`%% A >> (foo => bar => baz) >> B >> no => paren => no => paren >> C >> D;`);

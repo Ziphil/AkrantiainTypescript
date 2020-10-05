@@ -1,27 +1,23 @@
 //
 
-import {
-  Identifier
-} from ".";
-
 
 export class ModuleName {
 
-  public identifier: Identifier | [Identifier, Identifier];
+  private text: string | [string, string];
 
-  public constructor(identifier: Identifier, extraIdentifier?: Identifier) {
-    if (extraIdentifier !== undefined) {
-      this.identifier = [identifier, extraIdentifier];
+  public constructor(text: string, extraText?: string) {
+    if (extraText !== undefined) {
+      this.text = [text, extraText];
     } else {
-      this.identifier = identifier;
+      this.text = text;
     }
   }
 
   public equals(that: ModuleName): boolean {
-    if (this.identifier instanceof Identifier && that.identifier instanceof Identifier) {
-      return this.identifier.equals(that.identifier);
-    } else if (Array.isArray(this.identifier) && Array.isArray(that.identifier)) {
-      return this.identifier[0].equals(that.identifier[0]) && this.identifier[1].equals(that.identifier[1]);
+    if (typeof this.text === "string" && typeof that.text === "string") {
+      return this.text === that.text;
+    } else if (Array.isArray(this.text) && Array.isArray(that.text)) {
+      return this.text[0] === that.text[0] && this.text[1] === that.text[1];
     } else {
       return false;
     }
@@ -29,10 +25,10 @@ export class ModuleName {
 
   public toString(): string {
     let string = "";
-    if (this.identifier instanceof Identifier) {
-      string += this.identifier.toString();
+    if (typeof this.text === "string") {
+      string += this.text.toString();
     } else {
-      string += this.identifier.join(" => ");
+      string += this.text.join(" => ");
     }
     return string;
   }

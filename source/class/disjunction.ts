@@ -10,7 +10,7 @@ import {
 
 export class Disjunction implements Matchable {
 
-  public matchables: Array<Matchable>;
+  private matchables: Array<Matchable>;
   private negated: boolean;
 
   public constructor(matchables: Array<Matchable>, negated: boolean = false) {
