@@ -96,13 +96,13 @@ export class Module {
     for (let definition of this.definitions) {
       let identifier = definition.findUnknownIdentifier(this);
       if (identifier !== undefined) {
-        throw new AkrantiainError(1100, -1, `Unresolved identifier: '${identifier.name}' in '${definition}'`);
+        throw new AkrantiainError(1100, -1, `Unresolved identifier: '${identifier.text}' in '${definition}'`);
       }
     }
     for (let rule of this.rules) {
       let identifier = rule.findUnknownIdentifier(this);
       if (identifier !== undefined) {
-        throw new AkrantiainError(1101, 335, `Unresolved identifier: '${identifier.name}' in '${rule}'`);
+        throw new AkrantiainError(1101, 335, `Unresolved identifier: '${identifier.text}' in '${rule}'`);
       }
     }
   }
@@ -112,7 +112,7 @@ export class Module {
     for (let definition of this.definitions) {
       let identifier = definition.findCircularIdentifier([], this);
       if (identifier !== undefined) {
-        throw new AkrantiainError(1102, -1, `Circular reference involving identifier: '${identifier.name}' in '${definition}'`);
+        throw new AkrantiainError(1102, -1, `Circular reference involving identifier: '${identifier.text}' in '${definition}'`);
       }
     }
   }
@@ -175,7 +175,7 @@ export class Module {
 
   public findPunctuationContent(): Matchable {
     for (let definition of this.definitions) {
-      if (definition.identifier.name === "PUNCTUATION") {
+      if (definition.identifier.text === "PUNCTUATION") {
         return definition.content;
       }
     }

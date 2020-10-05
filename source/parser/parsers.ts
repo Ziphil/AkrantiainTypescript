@@ -137,7 +137,7 @@ export class Parsers {
   public static environment: Parser<Environment> = lazy(() => {
     let parser = seq(
       seq(Parsimmon.string("@"), Parsers.blank),
-      Parsers.identifier.map((identifier) => identifier.name),
+      Parsers.identifierString,
       seq(Parsers.blank, Parsers.semicolon)
     ).map(([, rawName]) => new Environment(rawName));
     return parser;
@@ -165,14 +165,14 @@ export class Parsers {
   // パースした結果は、推移型モジュールを 1 つずつに分解したモジュール名の配列になります。
   // 例えば、「A => B => C => D」という文字列は、「A => B」と「B => C」と「C => D」の 3 つのモジュール名からなる配列にパースされます。
   public static moduleChainElement: Parser<Array<ModuleName>> = lazy(() => {
-    let parser = Parsers.identifier.sepBy1(Parsimmon.string("=>").trim(Parsers.blank)).map((identifiers) => {
-      if (identifiers.length === 1) {
-        let name = new ModuleName(identifiers[0]);
+    let parser = Parsers.identifierString.sepBy1(Parsimmon.string("=>").trim(Parsers.blank)).map((texts) => {
+      if (texts.length === 1) {
+        let name = new ModuleName(texts[0]);
         return [name];
       } else {
         let names = [];
-        for (let i = 0 ; i < identifiers.length - 1; i ++) {
-          let name = new ModuleName(identifiers[i], identifiers[i + 1]);
+        for (let i = 0 ; i < texts.length - 1; i ++) {
+          let name = new ModuleName(texts[i], texts[i + 1]);
           names.push(name);
         }
         return names;
@@ -187,15 +187,15 @@ export class Parsers {
   });
 
   public static moduleSimpleName: Parser<ModuleName> = lazy(() => {
-    return Parsers.identifier.map((identifier) => new ModuleName(identifier));
+    return Parsers.identifierString.map((text) => new ModuleName(text));
   });
 
   public static moduleChainName: Parser<ModuleName> = lazy(() => {
     let parser = seq(
-      Parsers.identifier,
+      Parsers.identifierString,
       Parsimmon.string("=>").trim(Parsers.blank),
-      Parsers.identifier
-    ).map(([first, , second]) => new ModuleName(first, second));
+      Parsers.identifierString
+    ).map(([text, , extraText]) => new ModuleName(text, extraText));
     return parser;
   });
 
@@ -288,7 +288,12 @@ export class Parsers {
   });
 
   public static identifier: Parser<Identifier> = lazy(() => {
-    let parser = Parsimmon.regexp(/[a-zA-Z][a-zA-Z0-9_]*/).map((string) => new Identifier(string));
+    let parser = Parsers.identifierString.map((string) => new Identifier(string));
+    return parser;
+  });
+
+  public static identifierString: Parser<string> = lazy(() => {
+    let parser = Parsimmon.regexp(/[a-zA-Z][a-zA-Z0-9_]*/);
     return parser;
   });
 
