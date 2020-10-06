@@ -203,6 +203,10 @@ export class Module {
     return this.environments.findIndex((environment) => environment.name === name) >= 0;
   }
 
+  public isEmpty(): boolean {
+    return this.definitions.length <= 0 && this.rules.length <= 0 && this.environments.length <= 0 && this.moduleChain === undefined;
+  }
+
   public toString(indent: number = 0): string {
     let string = "";
     string += " ".repeat(indent) + `% ${this.name ?? "<implicit>"} {\n`;

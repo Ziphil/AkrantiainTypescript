@@ -1,6 +1,6 @@
 {
   "name": "akrantiain",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "author": "Ziphil",
   "description": "TypeScript implementation of Akrantiain, a domain specific language to describe phonological rules of languages",
   "homepage": "https://github.com/Ziphil/TypescriptAkrantiain",
@@ -23,6 +23,7 @@
     "verbose": true
   },
   "devDependencies": {
+    "@types/codemirror": "0.0.98",
     "@types/jest": "^26.0.14",
     "@types/parsimmon": "^1.10.3",
     "jest": "^26.4.2",
@@ -33,6 +34,7 @@
     "typescript": "^4.0.3"
   },
   "dependencies": {
+    "codemirror": "^5.58.1",
     "parsimmon": "^1.16.0"
   }
 }
