@@ -17,18 +17,20 @@ export class Akrantiain {
 
   public constructor(modules: Array<Module>) {
     for (let module of modules) {
-      if (module.name === null) {
-        if (this.implicitModule === undefined) {
-          this.implicitModule = module;
+      if (!module.isEmpty()) {
+        if (module.name === null) {
+          if (this.implicitModule === undefined) {
+            this.implicitModule = module;
+          } else {
+            throw new AkrantiainError(1003, -1, "There are more than one implicit modules");
+          }
         } else {
-          throw new AkrantiainError(1003, -1, "There are more than one implicit modules");
-        }
-      } else {
-        let duplicated = this.explicitModules.findIndex((existingModule) => existingModule.name!.equals(module.name!)) >= 0;
-        if (!duplicated) {
-          this.explicitModules.push(module);
-        } else {
-          throw new AkrantiainError(1004, 1113, `Duplicate definition of module: '${module.name}'`);
+          let duplicated = this.explicitModules.findIndex((existingModule) => existingModule.name!.equals(module.name!)) >= 0;
+          if (!duplicated) {
+            this.explicitModules.push(module);
+          } else {
+            throw new AkrantiainError(1004, 1113, `Duplicate definition of module: '${module.name}'`);
+          }
         }
       }
     }

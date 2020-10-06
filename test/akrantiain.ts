@@ -37,7 +37,7 @@ describe("normal", () => {
     `);
     expect(akrantiain.convert("ëäëäëä ëäëäëä")).toBe("SSSSSS CCCCCC");
   });
-  test("diacritic (nfd)", () => {
+  test("diacritic (normalize)", () => {
     let akrantiain = Akrantiain.load(`
       @USE_NFD;
       ("ë" | "ä") -> /S/;  # single
@@ -45,7 +45,7 @@ describe("normal", () => {
     `);
     expect(akrantiain.convert("ëäëäëä ëäëäëä")).toBe("SSSSSS SSSSSS");
   });
-  test("comment", () => {
+  test("comment 1", () => {
     let akrantiain = Akrantiain.load(`
       "a" -> /X/; # comment
       # comment comment
@@ -54,6 +54,15 @@ describe("normal", () => {
     `);
     expect(akrantiain.convert("abab")).toBe("XYXY");
     expect(() => akrantiain.convert("c")).toThrow();
+  });
+  test("comment 2", () => {
+    let akrantiain = Akrantiain.load(`
+      # before
+      # comment comment
+      % foo { "a" -> /X/; }
+      %% foo;
+    `);
+    expect(akrantiain.convert("a")).toBe("X");
   });
   test("simple module", () => {
     let akrantiain = Akrantiain.load(`
