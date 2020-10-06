@@ -13,9 +13,11 @@ Although it is designed to be used to generate a pronunciation from a spelling, 
 Akrantiain is originally introduced in [this repository](https://github.com/sozysozbot/akrantiain2).
 See here for further information about this language.
 
-This repository contains a TypeScript implementation of Akrantiain.
+This package contains a TypeScript implementation of Akrantiain.
 Note that it is not completely compatible to the original one; especially it may run differently when a rule contains an empty string.
 It also extends the syntax and semantics of the language, whose documentation is now in preparation.
+
+This package also ships a mode definition file for [CodeMirror](https://www.npmjs.com/package/codemirror), which is in `code-mirror` directory.
 
 ## Installation
 Install via [npm](https://www.npmjs.com/package/akrantiain).
@@ -34,4 +36,4 @@ console.log(output)  // outputs “XYZ”
 ```
 
 ## Documentations
-- [Error messages](document/error.md)
+- [Error messages](https://github.com/Ziphil/TypescriptAkrantiain/blob/master/document/error.md)
