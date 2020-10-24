@@ -1,5 +1,5 @@
 <div align="center">
-<h1>TypeScript Akrantiain</h1>
+<h1>Akrantiain</h1>
 </div>
 
 ![](https://img.shields.io/github/package-json/v/Ziphil/TypescriptAkrantiain)
