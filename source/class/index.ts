@@ -9,6 +9,7 @@ export * from "./identifier";
 export * from "./matchable";
 export * from "./module";
 export * from "./module-chain";
+export * from "./module-name";
 export * from "./rule";
 export * from "./sequence";
 export * from "./stat-element";
