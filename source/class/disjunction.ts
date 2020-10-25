@@ -22,9 +22,9 @@ export class Disjunction implements Matchable {
     let to = (() => {
       if (this.matchables.length > 0) {
         for (let matchable of this.matchables.slice().reverse()) {
-          let singleTo = matchable.matchRight(stat, from, module);
-          if (singleTo >= 0) {
-            return singleTo;
+          let to = matchable.matchRight(stat, from, module);
+          if (to >= 0) {
+            return to;
           }
         }
         return -1;
@@ -43,9 +43,9 @@ export class Disjunction implements Matchable {
     let from = (() => {
       if (this.matchables.length > 0) {
         for (let matchable of this.matchables.slice().reverse()) {
-          let singleFrom = matchable.matchLeft(stat, to, module);
-          if (singleFrom >= 0) {
-            return singleFrom;
+          let from = matchable.matchLeft(stat, to, module);
+          if (from >= 0) {
+            return from;
           }
         }
         return -1;
