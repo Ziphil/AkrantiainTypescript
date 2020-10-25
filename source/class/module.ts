@@ -18,41 +18,44 @@ import {
 
 export class Module {
 
-  public name: ModuleName | null;
-  private definitions: Array<Definition> = [];
-  private rules: Array<Rule> = [];
-  private environments: Array<Environment> = [];
-  private moduleChain?: ModuleChain;
+  public readonly name: ModuleName | null;
+  private readonly definitions: ReadonlyArray<Definition>;
+  private readonly rules: ReadonlyArray<Rule>;
+  private readonly environments: ReadonlyArray<Environment>;
+  private readonly moduleChain?: ModuleChain;
 
   public constructor(name: ModuleName | null, sentences: Array<Sentence>) {
-    this.name = name;
+    let definitions = [];
+    let rules = [];
+    let environments = [];
+    let moduleChain;
     for (let sentence of sentences) {
       if (sentence instanceof ModuleChain) {
-        if (this.definitions.length > 0 || this.rules.length > 0) {
+        if (definitions.length > 0 || rules.length > 0) {
           throw new AkrantiainError(1005, -1, `Module has both sentences and a module chain: '${name}'`);
         }
       } else {
-        if (this.moduleChain !== undefined) {
+        if (moduleChain !== undefined) {
           throw new AkrantiainError(1005, -1, `Module has both sentences and a module chain: '${name}'`);
         }
       }
       if (sentence instanceof Definition) {
-        let duplicatedIndex = this.definitions.findIndex((definition) => {
+        let duplicatedIndex = definitions.findIndex((definition) => {
           let castSentence = sentence as Definition;
           return definition.identifier.equals(castSentence.identifier);
         });
         if (duplicatedIndex < 0) {
-          this.definitions.push(sentence);
+          definitions.push(sentence);
         } else {
           throw new AkrantiainError(1103, 210, `Duplicate definition of identifier: '${sentence.identifier}'`);
         }
       } else if (sentence instanceof Rule) {
-        this.rules.push(sentence);
+        rules.push(sentence);
       } else if (sentence instanceof Environment) {
-        this.environments.push(sentence);
+        environments.push(sentence);
       } else if (sentence instanceof ModuleChain) {
-        if (this.moduleChain === undefined) {
-          this.moduleChain = sentence;
+        if (moduleChain === undefined) {
+          moduleChain = sentence;
         } else {
           throw new AkrantiainError(1006, -1, `Module has multiple module chains: '${name}'`);
         }
@@ -60,6 +63,11 @@ export class Module {
         throw new Error("This cannot happen");
       }
     }
+    this.name = name;
+    this.definitions = definitions;
+    this.rules = rules;
+    this.environments = environments;
+    this.moduleChain = moduleChain;
     this.checkUnknownIdentifier();
     this.checkCircularIdentifier();
   }

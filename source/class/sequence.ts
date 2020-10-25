@@ -10,7 +10,7 @@ import {
 
 export class Sequence implements Matchable {
 
-  private matchables: Array<Matchable>;
+  private readonly matchables: ReadonlyArray<Matchable>;
 
   public constructor(matchables: Array<Matchable>) {
     this.matchables = matchables;

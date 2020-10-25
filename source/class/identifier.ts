@@ -10,7 +10,7 @@ import {
 
 export class Identifier implements Matchable {
 
-  public text: string;
+  public readonly text: string;
 
   public constructor(text: string) {
     this.text = text;

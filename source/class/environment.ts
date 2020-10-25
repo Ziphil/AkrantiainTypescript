@@ -7,7 +7,7 @@ import {
 
 export class Environment {
 
-  public name?: EnvironmentName;
+  public readonly name?: EnvironmentName;
 
   public constructor(rawName: string) {
     let upperRawName = rawName.toUpperCase();

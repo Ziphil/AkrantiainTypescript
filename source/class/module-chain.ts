@@ -7,7 +7,7 @@ import {
 
 export class ModuleChain {
 
-  public names: Array<ModuleName>;
+  public readonly names: ReadonlyArray<ModuleName>;
 
   public constructor(names: Array<ModuleName>) {
     this.names = names;

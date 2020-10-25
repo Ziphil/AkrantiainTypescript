@@ -16,10 +16,10 @@ import {
 
 export class Rule {
 
-  private selections: Array<Matchable>;
-  private leftCondition?: Matchable;
-  private rightCondition?: Matchable;
-  private phonemes: Array<Phoneme>;
+  private readonly selections: ReadonlyArray<Matchable>;
+  private readonly leftCondition?: Matchable;
+  private readonly rightCondition?: Matchable;
+  private readonly phonemes: ReadonlyArray<Phoneme>;
 
   public constructor(ruleLeft: RuleLeft, ruleRight: RuleRight) {
     this.selections = ruleLeft.selections;
@@ -229,10 +229,11 @@ export class Rule {
       }
     })();
     let nextPhonemes = this.phonemes.slice(leftIndex, rightIndex);
-    this.selections = nextSelections;
-    this.leftCondition = nextLeftCondition;
-    this.rightCondition = nextRightCondition;
-    this.phonemes = nextPhonemes;
+    let anyThis = this as any;
+    anyThis.selections = nextSelections;
+    anyThis.leftCondition = nextLeftCondition;
+    anyThis.rightCondition = nextRightCondition;
+    anyThis.phonemes = nextPhonemes;
   }
 
   public findUnknownIdentifier(module: Module): Identifier | undefined {

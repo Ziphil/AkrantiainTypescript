@@ -3,7 +3,7 @@
 
 export class ModuleName {
 
-  private text: string | [string, string];
+  private readonly text: string | [string, string];
 
   public constructor(text: string, extraText?: string) {
     if (extraText !== undefined) {
