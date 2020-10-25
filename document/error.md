@@ -35,9 +35,9 @@ There is no implicit module (or the implicit module is empty).
 
 ### 1003: `There are more than one implicit modules`
 There are more than one implicit modules defined.
-This most likely occurs when module definitions are placed between setting specifiers and a module chain:
+This occurs when there are two sentences in top-level which are separated by an explicit module.
 ```
-@FALL_THROUGH;
+foo = "a" | "b";
 % module { "a" -> /A/; }
 %% module;  # error occurs
 ```
