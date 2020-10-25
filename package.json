@@ -1,6 +1,6 @@
 {
   "name": "akrantiain",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": "Ziphil",
   "description": "TypeScript implementation of Akrantiain, a domain specific language to describe phonological rules of languages",
   "homepage": "https://github.com/Ziphil/TypescriptAkrantiain",
