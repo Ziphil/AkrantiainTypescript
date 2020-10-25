@@ -2,13 +2,15 @@
 
 import {
   Identifier,
-  Matchable,
   Module,
   Stat
 } from ".";
+import {
+  Matchable
+} from "./matchable";
 
 
-export class Circumflex implements Matchable {
+export class Circumflex extends Matchable {
 
   public matchRight(stat: Stat, from: number, module: Module): number {
     let to = -1;

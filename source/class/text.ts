@@ -2,17 +2,20 @@
 
 import {
   Identifier,
-  Matchable,
   Module,
   Stat
 } from ".";
+import {
+  Matchable
+} from "./matchable";
 
 
-export class Quote implements Matchable {
+export class Quote extends Matchable {
 
-  public text: string;
+  public readonly text: string;
 
   public constructor(text: string) {
+    super();
     this.text = text;
   }
 
@@ -115,7 +118,7 @@ export class Quote implements Matchable {
 
 export class Slash {
 
-  public text: string;
+  public readonly text: string;
 
   public constructor(text: string) {
     this.text = text;

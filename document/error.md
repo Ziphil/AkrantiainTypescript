@@ -35,9 +35,9 @@ There is no implicit module (or the implicit module is empty).
 
 ### 1003: `There are more than one implicit modules`
 There are more than one implicit modules defined.
-This most likely occurs when module definitions are placed between setting specifiers and a module chain:
+This occurs when there are two sentences in top-level which are separated by an explicit module.
 ```
-@FALL_THROUGH;
+foo = "a" | "b";
 % module { "a" -> /A/; }
 %% module;  # error occurs
 ```
@@ -60,7 +60,7 @@ An undefined identifier is used in a definition of an identifier.
 An undefined identifier is used in a definition of a rule.
 
 ### 1102: `Circular reference involving identifier: 'xxx' in 'xxx'`
-There is a circular reference of modules.
+There is a circular reference of identifiers.
 Since this may cause an infinite loop at run-time, the processor reports it as an error beforehand.
 This implementation allows to use identifiers in a right-hand side of an identifier definition (which is not allowed in the original), this error may occur.
 ```

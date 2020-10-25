@@ -2,17 +2,20 @@
 
 import {
   AkrantiainError,
-  Matchable,
   Module,
   Stat
 } from ".";
+import {
+  Matchable
+} from "./matchable";
 
 
-export class Identifier implements Matchable {
+export class Identifier extends Matchable {
 
-  public text: string;
+  public readonly text: string;
 
   public constructor(text: string) {
+    super();
     this.text = text;
   }
 

@@ -27,12 +27,12 @@ npm i akrantiain
 
 ## Usage
 Call `Akrantiain.load` with a source string to create an `Akrantiain` object, and then call `convert` with an input string.
-```typescript
+```javascript
 const {Akrantiain} = require("akrantiain");
 
 let akrantiain = Akrantiain.load(`"a" -> /X/; "b" -> /Y/; "c" -> /Z/;`);
 let output = akrantiain.convert("abc");
-console.log(output)  // outputs “XYZ”
+console.log(output);  // outputs “XYZ”
 ```
 
 ## Documentations

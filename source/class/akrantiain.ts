@@ -12,31 +12,35 @@ import {
 
 export class Akrantiain {
 
-  private implicitModule?: Module;
-  private explicitModules: Array<Module> = [];
+  private readonly implicitModule: Module;
+  private readonly explicitModules: ReadonlyArray<Module>;
 
   public constructor(modules: Array<Module>) {
+    let implicitModule;
+    let explicitModules = [];
     for (let module of modules) {
       if (!module.isEmpty()) {
         if (module.name === null) {
-          if (this.implicitModule === undefined) {
-            this.implicitModule = module;
+          if (implicitModule === undefined) {
+            implicitModule = module;
           } else {
             throw new AkrantiainError(1003, -1, "There are more than one implicit modules");
           }
         } else {
-          let duplicated = this.explicitModules.findIndex((existingModule) => existingModule.name!.equals(module.name!)) >= 0;
+          let duplicated = explicitModules.findIndex((existingModule) => existingModule.name!.equals(module.name!)) >= 0;
           if (!duplicated) {
-            this.explicitModules.push(module);
+            explicitModules.push(module);
           } else {
             throw new AkrantiainError(1004, 1113, `Duplicate definition of module: '${module.name}'`);
           }
         }
       }
     }
-    if (this.implicitModule === undefined) {
+    if (implicitModule === undefined) {
       throw new AkrantiainError(1002, -1, "No implicit module");
     }
+    this.implicitModule = implicitModule;
+    this.explicitModules = explicitModules;
     this.checkUnknownModuleName();
     this.checkCircularModuleName();
   }
@@ -57,7 +61,7 @@ export class Akrantiain {
 
   // モジュールチェーン文で存在しないモジュールを参照していないかチェックします。
   private checkUnknownModuleName(): void {
-    let modules = [...this.explicitModules, this.implicitModule!];
+    let modules = [...this.explicitModules, this.implicitModule];
     for (let module of modules) {
       let name = module.findUnknownModuleName(this);
       if (name !== undefined) {
@@ -69,7 +73,7 @@ export class Akrantiain {
   // モジュールチェーン文でモジュールが循環参照していないかチェックします。
   // このメソッドは暗黙モジュールから参照されているもののみを調べるので、参照されていない明示モジュールの中での循環参照は検査しません。
   private checkCircularModuleName(): void {
-    let name = this.implicitModule!.findCircularModuleName([], this);
+    let name = this.implicitModule.findCircularModuleName([], this);
     if (name !== undefined) {
       throw new AkrantiainError(1001, 1112, `Circular reference involving module: '${name}'`);
     }

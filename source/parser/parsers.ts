@@ -138,7 +138,7 @@ export class Parsers {
   private static environment: Parser<Environment> = lazy(() => {
     let parser = seq(
       seq(Parsimmon.string("@"), Parsers.blank),
-      Parsers.identifierString,
+      Parsers.identifierText,
       seq(Parsers.blank, Parsers.semicolon)
     ).map(([, rawName]) => new Environment(rawName));
     return parser;
@@ -166,7 +166,7 @@ export class Parsers {
   // パースした結果は、推移型モジュールを 1 つずつに分解したモジュール名の配列になります。
   // 例えば、「A => B => C => D」という文字列は、「A => B」と「B => C」と「C => D」の 3 つのモジュール名からなる配列にパースされます。
   private static moduleChainElement: Parser<Array<ModuleName>> = lazy(() => {
-    let parser = Parsers.identifierString.sepBy1(Parsimmon.string("=>").trim(Parsers.blank)).map((texts) => {
+    let parser = Parsers.identifierText.sepBy1(Parsimmon.string("=>").trim(Parsers.blank)).map((texts) => {
       if (texts.length === 1) {
         let name = new ModuleName(texts[0]);
         return [name];
@@ -188,14 +188,14 @@ export class Parsers {
   });
 
   private static moduleSimpleName: Parser<ModuleName> = lazy(() => {
-    return Parsers.identifierString.map((text) => new ModuleName(text));
+    return Parsers.identifierText.map((text) => new ModuleName(text));
   });
 
   private static moduleChainName: Parser<ModuleName> = lazy(() => {
     let parser = seq(
-      Parsers.identifierString,
+      Parsers.identifierText,
       Parsimmon.string("=>").trim(Parsers.blank),
-      Parsers.identifierString
+      Parsers.identifierText
     ).map(([text, , extraText]) => new ModuleName(text, extraText));
     return parser;
   });
@@ -205,7 +205,7 @@ export class Parsers {
       Parsimmon.string("\""),
       alt(Parsers.quoteEscape, Parsers.quoteContent).many().tie(),
       Parsimmon.string("\"")
-    ).map(([, string]) => new Quote(string));
+    ).map(([, text]) => new Quote(text));
     return parser;
   });
 
@@ -235,7 +235,7 @@ export class Parsers {
       Parsimmon.string("/"),
       alt(Parsers.slashEscape, Parsers.slashContent).many().tie(),
       Parsimmon.string("/")
-    ).map(([, string]) => new Slash(string));
+    ).map(([, text]) => new Slash(text));
     return parser;
   });
 
@@ -289,11 +289,11 @@ export class Parsers {
   });
 
   private static identifier: Parser<Identifier> = lazy(() => {
-    let parser = Parsers.identifierString.map((string) => new Identifier(string));
+    let parser = Parsers.identifierText.map((text) => new Identifier(text));
     return parser;
   });
 
-  private static identifierString: Parser<string> = lazy(() => {
+  private static identifierText: Parser<string> = lazy(() => {
     let parser = Parsimmon.regexp(/[a-zA-Z][a-zA-Z0-9_]*/);
     return parser;
   });

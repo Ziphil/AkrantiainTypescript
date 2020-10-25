@@ -2,17 +2,20 @@
 
 import {
   Identifier,
-  Matchable,
   Module,
   Stat
 } from ".";
+import {
+  Matchable
+} from "./matchable";
 
 
-export class Sequence implements Matchable {
+export class Sequence extends Matchable {
 
-  private matchables: Array<Matchable>;
+  private readonly matchables: ReadonlyArray<Matchable>;
 
   public constructor(matchables: Array<Matchable>) {
+    super();
     this.matchables = matchables;
   }
 

@@ -9,8 +9,8 @@ import {
 
 export class Definition {
 
-  public identifier: Identifier;
-  public content: Matchable;
+  public readonly identifier: Identifier;
+  public readonly content: Matchable;
 
   public constructor(identifier: Identifier, content: Matchable) {
     this.identifier = identifier;
