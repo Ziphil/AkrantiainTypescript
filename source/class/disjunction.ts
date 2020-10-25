@@ -2,18 +2,21 @@
 
 import {
   Identifier,
-  Matchable,
   Module,
   Stat
 } from ".";
+import {
+  Matchable
+} from "./matchable";
 
 
-export class Disjunction implements Matchable {
+export class Disjunction extends Matchable {
 
   private readonly matchables: ReadonlyArray<Matchable>;
   private readonly negated: boolean;
 
   public constructor(matchables: Array<Matchable>, negated: boolean = false) {
+    super();
     this.matchables = matchables;
     this.negated = negated;
   }
