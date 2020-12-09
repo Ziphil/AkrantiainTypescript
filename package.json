@@ -14,7 +14,10 @@
     "prepare": "tsc"
   },
   "eslintConfig": {
-    "extends": "ziphil"
+    "extends": "ziphil",
+    "rules": {
+      "import/order": "off"
+    }
   },
   "jest": {
     "testMatch": [
