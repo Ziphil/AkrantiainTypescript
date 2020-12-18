@@ -279,7 +279,7 @@ export class Parsers {
     return parser;
   });
 
-  // 文末の (省略されているかもしれない) セミコロンおよびその後の (改行を含む) スペースをパースします。
+  // 文末の (省略されているかもしれない) セミコロンおよびその後の改行を含むスペースをパースします。
   private static semicolon: Parser<null> = lazy(() => {
     let semicolonParser = seq(Parsimmon.string(";"), Parsers.blankOrBreak);
     let breakParser = seq(Parsers.break, Parsers.blankOrBreak);
