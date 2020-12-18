@@ -188,7 +188,8 @@ export class Parsers {
   });
 
   private static moduleSimpleName: Parser<ModuleName> = lazy(() => {
-    return Parsers.identifierText.map((text) => new ModuleName(text));
+    let parser = Parsers.identifierText.map((text) => new ModuleName(text));
+    return parser;
   });
 
   private static moduleChainName: Parser<ModuleName> = lazy(() => {
