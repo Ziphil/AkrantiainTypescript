@@ -16,12 +16,13 @@
   "eslintConfig": {
     "extends": "ziphil",
     "rules": {
+      "@typescript-eslint/quotes": "off",
       "import/order": "off"
     }
   },
   "jest": {
     "testMatch": [
-      "**/test/**/*.(ts|js)"
+      "<rootDir>/test/**/*.(ts|js)"
     ],
     "transform": {
       "^.+\\.(ts|tsx)$": "ts-jest"
