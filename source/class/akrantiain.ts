@@ -6,8 +6,8 @@ import {
   ModuleName
 } from ".";
 import {
-  Parsers
-} from "../parser/parsers";
+  AkrantiainParser
+} from "../parser/parser";
 
 
 export class Akrantiain {
@@ -46,7 +46,8 @@ export class Akrantiain {
   }
 
   public static load(source: string): Akrantiain {
-    let akrantiain = Parsers.akrantiain.tryParse(source);
+    let parser = new AkrantiainParser();
+    let akrantiain = parser.tryParse(source);
     return akrantiain;
   }
 
