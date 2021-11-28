@@ -5,7 +5,7 @@
 ![](https://img.shields.io/github/package-json/v/Ziphil/TypescriptAkrantiain)
 ![](https://img.shields.io/github/commit-activity/y/Ziphil/TypescriptAkrantiain?label=commits)
 ![](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FZiphil%2FTypescriptAkrantiain%2Fbadge%3Fref%3Ddevelop&label=test&style=flat&logo=none)
-![](https://img.shields.io/codecov/c/github/Ziphil/TypescriptAkrantiain)
+[![](https://img.shields.io/codecov/c/github/Ziphil/TypescriptAkrantiain)](https://app.codecov.io/gh/Ziphil/TypescriptAkrantiain)
 
 
 ## Overview
