@@ -17,9 +17,9 @@ export class Circumflex extends Matchable {
     let matched = false;
     let pointer = from;
     while (pointer <= stat.elements.length) {
-      let element = stat.elements[pointer];
+      const element = stat.elements[pointer];
       if (element !== undefined) {
-        let elementPart = element.part;
+        const elementPart = element.part;
         let punctuationTo = -1;
         if (elementPart.match(/^\s*$/)) {
           matched = true;
@@ -46,9 +46,9 @@ export class Circumflex extends Matchable {
     let matched = false;
     let pointer = to - 1;
     while (pointer >= -1) {
-      let element = (pointer >= 0) ? stat.elements[pointer] : undefined;
+      const element = (pointer >= 0) ? stat.elements[pointer] : undefined;
       if (element !== undefined) {
-        let elementPart = element.part;
+        const elementPart = element.part;
         let punctuationFrom = -1;
         if (elementPart.match(/^\s*$/)) {
           matched = true;

@@ -24,12 +24,12 @@ export class Quote extends Matchable {
     let matchedLength = 0;
     let pointer = from;
     if (this.text !== "") {
-      let text = (module.hasEnvironment("USE_NFD")) ? this.text.normalize("NFD") : this.text;
+      const text = (module.hasEnvironment("USE_NFD")) ? this.text.normalize("NFD") : this.text;
       while (pointer < stat.elements.length) {
-        let element = stat.elements[pointer];
-        let elementPart = element.part;
+        const element = stat.elements[pointer];
+        const elementPart = element.part;
         if (matchedLength + elementPart.length <= text.length) {
-          let textSubstring = text.substring(matchedLength, matchedLength + elementPart.length);
+          const textSubstring = text.substring(matchedLength, matchedLength + elementPart.length);
           let adjustedTextSubstring = textSubstring;
           let adjustedElementPart = elementPart;
           if (!module.hasEnvironment("CASE_SENSITIVE")) {
@@ -63,12 +63,12 @@ export class Quote extends Matchable {
     let matchedLength = 0;
     let pointer = to - 1;
     if (this.text !== "") {
-      let text = (module.hasEnvironment("USE_NFD")) ? this.text.normalize("NFD") : this.text;
+      const text = (module.hasEnvironment("USE_NFD")) ? this.text.normalize("NFD") : this.text;
       while (pointer >= 0) {
-        let element = stat.elements[pointer];
-        let elementPart = element.part;
+        const element = stat.elements[pointer];
+        const elementPart = element.part;
         if (matchedLength + elementPart.length <= text.length) {
-          let textSubstring = text.substring(text.length - elementPart.length - matchedLength, text.length - matchedLength);
+          const textSubstring = text.substring(text.length - elementPart.length - matchedLength, text.length - matchedLength);
           let adjustedTextSubstring = textSubstring;
           let adjustedElementPart = elementPart;
           if (!module.hasEnvironment("CASE_SENSITIVE")) {

@@ -4,9 +4,9 @@ import CodeMirror from "codemirror";
 import "codemirror/addon/mode/simple";
 
 
-let CodeMirrorAny = CodeMirror as any;
+const CodeMirrorAny = CodeMirror as any;
 
-let base = [
+const base = [
   {regex: /"([^"\\]|\\"|\\\\|\\u[A-Fa-f0-9]{0,4})*?"/, token: "string"},
   {regex: /\/([^"\\]|\\\/|\\\\|\\u[A-Fa-f0-9]{0,4})*?\//, token: "string"},
   {regex: /[a-zA-Z][a-zA-Z0-9_]*/, token: "variable-1"},

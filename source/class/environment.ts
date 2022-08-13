@@ -10,7 +10,7 @@ export class Environment {
   public readonly name?: EnvironmentName;
 
   public constructor(rawName: string) {
-    let upperRawName = rawName.toUpperCase();
+    const upperRawName = rawName.toUpperCase();
     if (upperRawName === "CASE_SENSITIVE") {
       this.name = "CASE_SENSITIVE";
     } else if (upperRawName === "PRESERVE_CASE") {
@@ -20,7 +20,7 @@ export class Environment {
     } else if (upperRawName === "USE_NFD") {
       this.name = "USE_NFD";
     } else {
-      let caution = new AkrantiainError(3000, 2435, `Invalid environment name: '${rawName}'`);
+      const caution = new AkrantiainError(3000, 2435, `Invalid environment name: '${rawName}'`);
       console.warn(caution.message);
     }
   }

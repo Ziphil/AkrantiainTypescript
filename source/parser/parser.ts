@@ -42,7 +42,7 @@ export class AkrantiainParser {
   }
 
   private root: Parser<Akrantiain> = lazy(() => {
-    let parser = seq(
+    const parser = seq(
       this.blankOrBreak,
       alt(this.implicitModule, this.explicitModule).sepBy(this.blankOrBreak),
       this.blankOrBreak,
@@ -52,12 +52,12 @@ export class AkrantiainParser {
   });
 
   private implicitModule: Parser<Module> = lazy(() => {
-    let parser = this.sentences.map((sentences) => new Module(null, sentences));
+    const parser = this.sentences.map((sentences) => new Module(null, sentences));
     return parser;
   });
 
   private explicitModule: Parser<Module> = lazy(() => {
-    let parser = seq(
+    const parser = seq(
       seq(Parsimmon.string("%"), this.blank),
       this.moduleName,
       seq(this.blankOrBreak, Parsimmon.string("{"), this.blankOrBreak),
@@ -68,20 +68,20 @@ export class AkrantiainParser {
   });
 
   private sentences: Parser<Array<Sentence>> = lazy(() => {
-    let parser = this.sentence.atLeast(1).map((sentences) => {
-      let filteredSentences = sentences.filter((sentence) => sentence !== null) as Array<Sentence>;
+    const parser = this.sentence.atLeast(1).map((sentences) => {
+      const filteredSentences = sentences.filter((sentence) => sentence !== null) as Array<Sentence>;
       return filteredSentences;
     });
     return parser;
   });
 
   private sentence: Parser<Sentence | null> = lazy(() => {
-    let parser = alt(this.definition, this.rule, this.environment, this.moduleChain, this.comment);
+    const parser = alt(this.definition, this.rule, this.environment, this.moduleChain, this.comment);
     return parser;
   });
 
   private definition: Parser<Definition> = lazy(() => {
-    let parser = seq(
+    const parser = seq(
       this.identifier,
       Parsimmon.string("=").trim(this.blank),
       this.disjunction,
@@ -91,7 +91,7 @@ export class AkrantiainParser {
   });
 
   private rule: Parser<Rule> = lazy(() => {
-    let parser = seq(
+    const parser = seq(
       this.ruleLeft,
       Parsimmon.string("->").trim(this.blank),
       this.ruleRight,
@@ -101,7 +101,7 @@ export class AkrantiainParser {
   });
 
   private ruleLeft: Parser<RuleLeft> = lazy(() => {
-    let parser = seq(
+    const parser = seq(
       this.condition.times(0, 1).map((result) => result[0]),
       this.blank,
       this.selection.sepBy1(this.blank),
@@ -112,23 +112,23 @@ export class AkrantiainParser {
   });
 
   private ruleRight: Parser<RuleRight> = lazy(() => {
-    let elementParser = alt(this.quote, this.slash, this.dollar);
-    let parser = elementParser.sepBy1(this.blank);
+    const elementParser = alt(this.quote, this.slash, this.dollar);
+    const parser = elementParser.sepBy1(this.blank);
     return parser;
   });
 
   private disjunction: Parser<Disjunction> = lazy(() => {
-    let parser = this.sequence.sepBy1(Parsimmon.string("|").trim(this.blank)).map((sequences) => new Disjunction(sequences, false));
+    const parser = this.sequence.sepBy1(Parsimmon.string("|").trim(this.blank)).map((sequences) => new Disjunction(sequences, false));
     return parser;
   });
 
   private sequence: Parser<Sequence> = lazy(() => {
-    let parser = this.selection.sepBy1(this.blank).map((selections) => new Sequence(selections));
+    const parser = this.selection.sepBy1(this.blank).map((selections) => new Sequence(selections));
     return parser;
   });
 
   private condition: Parser<Matchable> = lazy(() => {
-    let parser = seq(
+    const parser = seq(
       Parsimmon.string("!"),
       this.blank,
       this.selection
@@ -137,13 +137,13 @@ export class AkrantiainParser {
   });
 
   private selection: Parser<Matchable> = lazy(() => {
-    let disjunctionParser = this.disjunction.thru(this.parened.bind(this));
-    let parser = alt(this.quote, this.circumflex, this.identifier, disjunctionParser);
+    const disjunctionParser = this.disjunction.thru(this.parened.bind(this));
+    const parser = alt(this.quote, this.circumflex, this.identifier, disjunctionParser);
     return parser;
   });
 
   private environment: Parser<Environment> = lazy(() => {
-    let parser = seq(
+    const parser = seq(
       seq(Parsimmon.string("@"), this.blank),
       this.identifierText,
       seq(this.blank, this.semicolon)
@@ -152,16 +152,16 @@ export class AkrantiainParser {
   });
 
   private moduleChain: Parser<ModuleChain> = lazy(() => {
-    let chainElementParser = alt(this.moduleChainElement, this.moduleChainElement.thru(this.parened.bind(this)));
-    let chainParser = chainElementParser.sepBy1(Parsimmon.string(">>").trim(this.blank)).map((chainElements) => {
-      let modules = [];
-      for (let chainElement of chainElements) {
+    const chainElementParser = alt(this.moduleChainElement, this.moduleChainElement.thru(this.parened.bind(this)));
+    const chainParser = chainElementParser.sepBy1(Parsimmon.string(">>").trim(this.blank)).map((chainElements) => {
+      const modules = [];
+      for (const chainElement of chainElements) {
         modules.push(...chainElement);
       }
-      let chain = new ModuleChain(modules);
+      const chain = new ModuleChain(modules);
       return chain;
     });
-    let parser = seq(
+    const parser = seq(
       seq(Parsimmon.string("%%"), this.blank),
       chainParser,
       seq(this.blank, this.semicolon)
@@ -173,14 +173,14 @@ export class AkrantiainParser {
   // パースした結果は、推移型モジュールを 1 つずつに分解したモジュール名の配列になります。
   // 例えば、「A => B => C => D」という文字列は、「A => B」と「B => C」と「C => D」の 3 つのモジュール名からなる配列にパースされます。
   private moduleChainElement: Parser<Array<ModuleName>> = lazy(() => {
-    let parser = this.identifierText.sepBy1(Parsimmon.string("=>").trim(this.blank)).map((texts) => {
+    const parser = this.identifierText.sepBy1(Parsimmon.string("=>").trim(this.blank)).map((texts) => {
       if (texts.length === 1) {
-        let name = new ModuleName(texts[0]);
+        const name = new ModuleName(texts[0]);
         return [name];
       } else {
-        let names = [];
+        const names = [];
         for (let i = 0 ; i < texts.length - 1; i ++) {
-          let name = new ModuleName(texts[i], texts[i + 1]);
+          const name = new ModuleName(texts[i], texts[i + 1]);
           names.push(name);
         }
         return names;
@@ -190,17 +190,17 @@ export class AkrantiainParser {
   });
 
   private moduleName: Parser<ModuleName> = lazy(() => {
-    let parser = alt(this.moduleChainName.thru(attempt), this.moduleSimpleName);
+    const parser = alt(this.moduleChainName.thru(attempt), this.moduleSimpleName);
     return parser;
   });
 
   private moduleSimpleName: Parser<ModuleName> = lazy(() => {
-    let parser = this.identifierText.map((text) => new ModuleName(text));
+    const parser = this.identifierText.map((text) => new ModuleName(text));
     return parser;
   });
 
   private moduleChainName: Parser<ModuleName> = lazy(() => {
-    let parser = seq(
+    const parser = seq(
       this.identifierText,
       Parsimmon.string("=>").trim(this.blank),
       this.identifierText
@@ -209,7 +209,7 @@ export class AkrantiainParser {
   });
 
   private quote: Parser<Quote> = lazy(() => {
-    let parser = seq(
+    const parser = seq(
       Parsimmon.string("\""),
       alt(this.quoteEscape, this.quoteContent).many().tie(),
       Parsimmon.string("\"")
@@ -218,13 +218,13 @@ export class AkrantiainParser {
   });
 
   private quoteEscape: Parser<string> = lazy(() => {
-    let parser = seq(
+    const parser = seq(
       Parsimmon.string("\\"),
       alt(Parsimmon.regexp(/u[A-Fa-f0-9]{4}/), Parsimmon.oneOf("\\\""))
     ).map(([, escape]) => {
       if (escape.startsWith("u")) {
-        let code = parseInt(escape.substr(1, 4), 16);
-        let char = String.fromCharCode(code);
+        const code = parseInt(escape.substr(1, 4), 16);
+        const char = String.fromCharCode(code);
         return char;
       } else {
         return escape;
@@ -234,12 +234,12 @@ export class AkrantiainParser {
   });
 
   private quoteContent: Parser<string> = lazy(() => {
-    let parser = Parsimmon.noneOf("\\\"");
+    const parser = Parsimmon.noneOf("\\\"");
     return parser;
   });
 
   private slash: Parser<Slash> = lazy(() => {
-    let parser = seq(
+    const parser = seq(
       Parsimmon.string("/"),
       alt(this.slashEscape, this.slashContent).many().tie(),
       Parsimmon.string("/")
@@ -248,13 +248,13 @@ export class AkrantiainParser {
   });
 
   private slashEscape: Parser<string> = lazy(() => {
-    let parser = seq(
+    const parser = seq(
       Parsimmon.string("\\"),
       alt(Parsimmon.regexp(/u[A-Fa-f0-9]{4}/), Parsimmon.oneOf("\\/"))
     ).map(([, escape]) => {
       if (escape.startsWith("u")) {
-        let code = parseInt(escape.substr(1, 4), 16);
-        let char = String.fromCharCode(code);
+        const code = parseInt(escape.substr(1, 4), 16);
+        const char = String.fromCharCode(code);
         return char;
       } else {
         return escape;
@@ -264,22 +264,22 @@ export class AkrantiainParser {
   });
 
   private slashContent: Parser<string> = lazy(() => {
-    let parser = Parsimmon.noneOf("\\/");
+    const parser = Parsimmon.noneOf("\\/");
     return parser;
   });
 
   private circumflex: Parser<Circumflex> = lazy(() => {
-    let parser = Parsimmon.string("^").result(new Circumflex());
+    const parser = Parsimmon.string("^").result(new Circumflex());
     return parser;
   });
 
   private dollar: Parser<Dollar> = lazy(() => {
-    let parser = Parsimmon.string("$").result(new Dollar());
+    const parser = Parsimmon.string("$").result(new Dollar());
     return parser;
   });
 
   private comment: Parser<null> = lazy(() => {
-    let parser = seq(
+    const parser = seq(
       Parsimmon.string("#"),
       Parsimmon.noneOf("\n").many(),
       this.blankOrBreak
@@ -289,42 +289,42 @@ export class AkrantiainParser {
 
   // 文末の (省略されているかもしれない) セミコロンおよびその後の改行を含むスペースをパースします。
   private semicolon: Parser<null> = lazy(() => {
-    let semicolonParser = seq(Parsimmon.string(";"), this.blankOrBreak);
-    let breakParser = seq(this.break, this.blankOrBreak);
-    let otherParser = Parsimmon.lookahead(alt(Parsimmon.string("#"), Parsimmon.string("}"), Parsimmon.eof));
-    let parser = alt(semicolonParser, breakParser, otherParser).result(null);
+    const semicolonParser = seq(Parsimmon.string(";"), this.blankOrBreak);
+    const breakParser = seq(this.break, this.blankOrBreak);
+    const otherParser = Parsimmon.lookahead(alt(Parsimmon.string("#"), Parsimmon.string("}"), Parsimmon.eof));
+    const parser = alt(semicolonParser, breakParser, otherParser).result(null);
     return parser;
   });
 
   private identifier: Parser<Identifier> = lazy(() => {
-    let parser = this.identifierText.map((text) => new Identifier(text));
+    const parser = this.identifierText.map((text) => new Identifier(text));
     return parser;
   });
 
   private identifierText: Parser<string> = lazy(() => {
-    let parser = Parsimmon.regexp(/[a-zA-Z][a-zA-Z0-9_]*/);
+    const parser = Parsimmon.regexp(/[a-zA-Z][a-zA-Z0-9_]*/);
     return parser;
   });
 
   private blankOrBreak: Parser<null> = lazy(() => {
-    let parser = Parsimmon.regexp(/\s*/).result(null);
+    const parser = Parsimmon.regexp(/\s*/).result(null);
     return parser;
   });
 
   private blank: Parser<null> = lazy(() => {
-    let parser = Parsimmon.regexp(/[^\S\n]*/).result(null);
+    const parser = Parsimmon.regexp(/[^\S\n]*/).result(null);
     return parser;
   });
 
   private break: Parser<null> = lazy(() => {
-    let parser = Parsimmon.string("\n").result(null);
+    const parser = Parsimmon.string("\n").result(null);
     return parser;
   });
 
   private parened<T>(parser: Parser<T>): Parser<T> {
-    let leftParser = seq(Parsimmon.string("("), this.blank);
-    let rightParser = seq(this.blank, Parsimmon.string(")"));
-    let wrappedParser = seq(leftParser, parser, rightParser).map((result) => result[1]);
+    const leftParser = seq(Parsimmon.string("("), this.blank);
+    const rightParser = seq(this.blank, Parsimmon.string(")"));
+    const wrappedParser = seq(leftParser, parser, rightParser).map((result) => result[1]);
     return wrappedParser;
   }
 

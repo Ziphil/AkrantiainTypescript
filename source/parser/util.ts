@@ -1,6 +1,5 @@
 //
 
-import Parsimmon from "parsimmon";
 import {
   Parser,
   lookahead

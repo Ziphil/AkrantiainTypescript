@@ -22,8 +22,8 @@ export class Sequence extends Matchable {
   public matchRight(stat: Stat, from: number, module: Module): number {
     if (this.matchables.length > 0) {
       let pointer = from;
-      for (let matchable of this.matchables) {
-        let to = matchable.matchRight(stat, pointer, module);
+      for (const matchable of this.matchables) {
+        const to = matchable.matchRight(stat, pointer, module);
         if (to >= 0) {
           pointer = to;
         } else {
@@ -39,8 +39,8 @@ export class Sequence extends Matchable {
   public matchLeft(stat: Stat, to: number, module: Module): number {
     if (this.matchables.length > 0) {
       let pointer = to;
-      for (let matchable of this.matchables.slice().reverse()) {
-        let from = matchable.matchLeft(stat, pointer, module);
+      for (const matchable of this.matchables.slice().reverse()) {
+        const from = matchable.matchLeft(stat, pointer, module);
         if (from >= 0) {
           pointer = from;
         } else {
@@ -58,8 +58,8 @@ export class Sequence extends Matchable {
   }
 
   public findUnknownIdentifier(module: Module): Identifier | undefined {
-    for (let matchable of this.matchables) {
-      let identifier = matchable.findUnknownIdentifier(module);
+    for (const matchable of this.matchables) {
+      const identifier = matchable.findUnknownIdentifier(module);
       if (identifier !== undefined) {
         return identifier;
       }
@@ -68,8 +68,8 @@ export class Sequence extends Matchable {
   }
 
   public findCircularIdentifier(identifiers: Array<Identifier>, module: Module): Identifier | undefined {
-    for (let matchable of this.matchables) {
-      let identifier = matchable.findCircularIdentifier(identifiers, module);
+    for (const matchable of this.matchables) {
+      const identifier = matchable.findCircularIdentifier(identifiers, module);
       if (identifier !== undefined) {
         return identifier;
       }

@@ -20,9 +20,9 @@ export class Identifier extends Matchable {
   }
 
   public matchRight(stat: Stat, from: number, module: Module): number {
-    let content = module.findContent(this);
+    const content = module.findContent(this);
     if (content !== undefined) {
-      let to = content.matchRight(stat, from, module);
+      const to = content.matchRight(stat, from, module);
       return to;
     } else {
       throw new AkrantiainError(9000, -1, "Cannot happen (at Identifier#matchRight)");
@@ -30,9 +30,9 @@ export class Identifier extends Matchable {
   }
 
   public matchLeft(stat: Stat, to: number, module: Module): number {
-    let content = module.findContent(this);
+    const content = module.findContent(this);
     if (content !== undefined) {
-      let from = content.matchLeft(stat, to, module);
+      const from = content.matchLeft(stat, to, module);
       return from;
     } else {
       throw new AkrantiainError(9001, -1, "Cannot happen (at Identifier#matchLeft)");
@@ -52,11 +52,11 @@ export class Identifier extends Matchable {
   }
 
   public findCircularIdentifier(identifiers: Array<Identifier>, module: Module): Identifier | undefined {
-    let identifier = identifiers.find((identifier) => identifier.equals(this));
+    const identifier = identifiers.find((identifier) => identifier.equals(this));
     if (identifier !== undefined) {
       return identifier;
     } else {
-      let definition = module.findDefinition(this);
+      const definition = module.findDefinition(this);
       if (definition !== undefined) {
         return definition.findCircularIdentifier(identifiers, module);
       } else {

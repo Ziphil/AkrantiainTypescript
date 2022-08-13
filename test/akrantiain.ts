@@ -7,7 +7,7 @@ import {
 
 describe("normal", () => {
   test("simple", () => {
-    let akrantiain = Akrantiain.load(`
+    const akrantiain = Akrantiain.load(`
       "a" -> /X/; "b" -> /Y/; "c" -> /Z/;
     `);
     expect(akrantiain.convert("abc")).toBe("XYZ");
@@ -15,7 +15,7 @@ describe("normal", () => {
     expect(() => akrantiain.convert("aka")).toThrow();
   });
   test("case conversion", () => {
-    let akrantiain = Akrantiain.load(`
+    const akrantiain = Akrantiain.load(`
       "A" -> /X/; "b" -> /Y/; "C" -> /Z/;
       "Ж" -> /1/; "ш" -> /2/; "Θ" -> /3/; "ψ" -> /4/;
     `);
@@ -23,7 +23,7 @@ describe("normal", () => {
     expect(akrantiain.convert("ЖшΘψ жШθΨ")).toBe("1234 1234");
   });
   test("case sensitive", () => {
-    let akrantiain = Akrantiain.load(`
+    const akrantiain = Akrantiain.load(`
       @CASE_SENSITIVE
       "A" -> /X/; "b" -> /Y/; "C" -> /Z/;
     `);
@@ -31,14 +31,14 @@ describe("normal", () => {
     expect(() => akrantiain.convert("a")).toThrow();
   });
   test("diacritic", () => {
-    let akrantiain = Akrantiain.load(`
+    const akrantiain = Akrantiain.load(`
       ("ë" | "ä") -> /S/;  # single
       ("ë" | "ä") -> /C/;  # combining
     `);
     expect(akrantiain.convert("ëäëäëä ëäëäëä")).toBe("SSSSSS CCCCCC");
   });
   test("diacritic (normalize)", () => {
-    let akrantiain = Akrantiain.load(`
+    const akrantiain = Akrantiain.load(`
       @USE_NFD;
       ("ë" | "ä") -> /S/;  # single
       ("ë" | "ä") -> /C/;  # combining
@@ -46,7 +46,7 @@ describe("normal", () => {
     expect(akrantiain.convert("ëäëäëä ëäëäëä")).toBe("SSSSSS SSSSSS");
   });
   test("comment 1", () => {
-    let akrantiain = Akrantiain.load(`
+    const akrantiain = Akrantiain.load(`
       "a" -> /X/; # comment
       # comment comment
       "b" -> /Y/;#comment
@@ -56,7 +56,7 @@ describe("normal", () => {
     expect(() => akrantiain.convert("c")).toThrow();
   });
   test("comment 2", () => {
-    let akrantiain = Akrantiain.load(`
+    const akrantiain = Akrantiain.load(`
       # before
       # comment comment
       % foo { "a" -> /X/; }
@@ -65,7 +65,7 @@ describe("normal", () => {
     expect(akrantiain.convert("a")).toBe("X");
   });
   test("simple module", () => {
-    let akrantiain = Akrantiain.load(`
+    const akrantiain = Akrantiain.load(`
       % upper {
         "a" -> /A/; "b" -> /B/; "c" -> /C/;
       }
@@ -85,7 +85,7 @@ describe("normal", () => {
 
 describe("extension", () => {
   test("simple", () => {
-    let akrantiain = Akrantiain.load(`
+    const akrantiain = Akrantiain.load(`
       vowel = "a" | "e" | "i" | "o" | "u";
       vowel2 = vowel vowel;
       vowel3 = vowel2 vowel;
@@ -103,7 +103,7 @@ describe("extension", () => {
     expect(akrantiain.convert("ta tei tuao")).toBe("not2[1] not3[2] T[3]");
   });
   test("right-hand quote", () => {
-    let akrantiain = Akrantiain.load(`
+    const akrantiain = Akrantiain.load(`
       "a" -> "X"; "b" -> "Y";
     `);
     expect(akrantiain.convert("aba")).toBe("XYX");
@@ -114,7 +114,7 @@ describe("errors", () => {
   test("unresolved module name", () => {
     expect.assertions(2);
     try {
-      let akrantiain = Akrantiain.load(`
+      const akrantiain = Akrantiain.load(`
         % foo { %% bar => baz; }
         % bar { "b" -> /B/; }
         % baz { "c" -> /C/; }
@@ -128,7 +128,7 @@ describe("errors", () => {
   test("circular module name", () => {
     expect.assertions(2);
     try {
-      let akrantiain = Akrantiain.load(`
+      const akrantiain = Akrantiain.load(`
         % foo { %% bar; }
         % bar { %% baz; }
         % baz { %% qux; }
@@ -143,7 +143,7 @@ describe("errors", () => {
   test("no implicit module", () => {
     expect.assertions(2);
     try {
-      let akrantiain = Akrantiain.load(`
+      const akrantiain = Akrantiain.load(`
         % foo { "a" -> /A/; }
         % bar { "b" -> /B/; }
       `);
@@ -155,7 +155,7 @@ describe("errors", () => {
   test("more than one implicit modules", () => {
     expect.assertions(2);
     try {
-      let akrantiain = Akrantiain.load(`
+      const akrantiain = Akrantiain.load(`
         @FALL_THROUGH;
         % foo { "a" -> /A/; }
         % bar { "b" -> /B/; }
@@ -169,7 +169,7 @@ describe("errors", () => {
   test("duplicate module name", () => {
     expect.assertions(2);
     try {
-      let akrantiain = Akrantiain.load(`
+      const akrantiain = Akrantiain.load(`
         % foo => bar { "a" -> /A/; }
         % bar { "b" -> /B/; }
         % foo => bar { "c" -> /C/; }
@@ -183,7 +183,7 @@ describe("errors", () => {
   test("module chain and sentences", () => {
     expect.assertions(2);
     try {
-      let akrantiain = Akrantiain.load(`
+      const akrantiain = Akrantiain.load(`
         % error {
           "a" -> /A/;
           %% dummy;
@@ -199,7 +199,7 @@ describe("errors", () => {
   test("mutiple module chains", () => {
     expect.assertions(2);
     try {
-      let akrantiain = Akrantiain.load(`
+      const akrantiain = Akrantiain.load(`
         % module { "a" -> /A/; }
         %% module;
         %% module;
@@ -212,7 +212,7 @@ describe("errors", () => {
   test("unresolved identifier (in definition)", () => {
     expect.assertions(2);
     try {
-      let akrantiain = Akrantiain.load(`
+      const akrantiain = Akrantiain.load(`
         foo = "a" | "b";
         bar = undefined;
       `);
@@ -224,7 +224,7 @@ describe("errors", () => {
   test("unresolved identifier (in rule)", () => {
     expect.assertions(2);
     try {
-      let akrantiain = Akrantiain.load(`
+      const akrantiain = Akrantiain.load(`
         foo = "a" | "b";
         foo -> /a/;
         foo undefined -> /b/ /c/;
@@ -237,7 +237,7 @@ describe("errors", () => {
   test("circular identifier", () => {
     expect.assertions(2);
     try {
-      let akrantiain = Akrantiain.load(`
+      const akrantiain = Akrantiain.load(`
         foo = bar | circular;
         circular = bar | baz;
         baz = foo;
@@ -251,7 +251,7 @@ describe("errors", () => {
   test("duplicate identifier", () => {
     expect.assertions(2);
     try {
-      let akrantiain = Akrantiain.load(`
+      const akrantiain = Akrantiain.load(`
         foo = "a" | "b";
         bar = "c";
         baz = "d";
@@ -265,7 +265,7 @@ describe("errors", () => {
   test("mismatched terms", () => {
     expect.assertions(2);
     try {
-      let akrantiain = Akrantiain.load(`
+      const akrantiain = Akrantiain.load(`
         !"a" "b" "c" !"d" -> /b/ /c/ /?/;
       `);
     } catch (error) {
@@ -276,7 +276,7 @@ describe("errors", () => {
   test("non-concrete", () => {
     expect.assertions(2);
     try {
-      let akrantiain = Akrantiain.load(`
+      const akrantiain = Akrantiain.load(`
         "a" "b" "c" -> $ $ $;
       `);
     } catch (error) {
@@ -287,7 +287,7 @@ describe("errors", () => {
   test("no rule", () => {
     expect.assertions(2);
     try {
-      let akrantiain = Akrantiain.load(`
+      const akrantiain = Akrantiain.load(`
         "a" -> /X/; "b" -> /Y/; "c" -> /Z/;
       `);
       akrantiain.convert("d");
@@ -300,7 +300,7 @@ describe("errors", () => {
 
 describe("suspicious behaviours", () => {
   test("aimez", () => {
-    let akrantiain = Akrantiain.load(`
+    const akrantiain = Akrantiain.load(`
       "ez" ^ -> /e/;
       "ai" -> /ɛ/;
       "m" ("a" | "e" | "i" | "o" | "u" | "y") -> /m/ $
@@ -308,13 +308,13 @@ describe("suspicious behaviours", () => {
     expect(akrantiain.convert("aimez")).toBe("ɛme");
   });
   test("empty string 1", () => {
-    let akrantiain = Akrantiain.load(`
+    const akrantiain = Akrantiain.load(`
       "" -> /X/; "a" -> /A/
     `);
     expect(akrantiain.convert("aaa a aa")).toBe("XAXAXAX XAX XAXAX");
   });
   test("empty string 2", () => {
-    let akrantiain = Akrantiain.load(`
+    const akrantiain = Akrantiain.load(`
       "" "n" -> /c/ $
       "" "n" -> /b/ $
       "n" -> /n/
@@ -326,7 +326,7 @@ describe("suspicious behaviours", () => {
 
 describe("examples by the original repository", () => {
   test("syntax", () => {
-    let akrantiain = Akrantiain.load(`
+    const akrantiain = Akrantiain.load(`
       % baz { %% foobar >> (foo) >> (A => B => C) ; }
       %foobar {
         @FALL_THRU;
@@ -362,7 +362,7 @@ describe("examples by the original repository", () => {
     expect(akrantiain.convert("papa")).toBe("paapaa");
   });
   test("lineparine", () => {
-    let akrantiain = Akrantiain.load(`
+    const akrantiain = Akrantiain.load(`
       % font_transcription => IPA {
         @CASE_SENSITIVE;
         vowel = "a" | "i" | "u" | "e" | "o" | "y"
@@ -436,7 +436,7 @@ describe("examples by the original repository", () => {
     expect(akrantiain.convert("panqa'dy")).toBe("pankwady");
   });
   test("base conversion", () => {
-    let akrantiain = Akrantiain.load(`
+    const akrantiain = Akrantiain.load(`
       % i {
         @FALL_THROUGH;
         a = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "A" | "B";

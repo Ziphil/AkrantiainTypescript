@@ -22,10 +22,10 @@ export class Disjunction extends Matchable {
   }
 
   public matchRight(stat: Stat, from: number, module: Module): number {
-    let to = (() => {
+    const to = (() => {
       if (this.matchables.length > 0) {
-        for (let matchable of this.matchables.slice().reverse()) {
-          let to = matchable.matchRight(stat, from, module);
+        for (const matchable of this.matchables.slice().reverse()) {
+          const to = matchable.matchRight(stat, from, module);
           if (to >= 0) {
             return to;
           }
@@ -43,10 +43,10 @@ export class Disjunction extends Matchable {
   }
 
   public matchLeft(stat: Stat, to: number, module: Module): number {
-    let from = (() => {
+    const from = (() => {
       if (this.matchables.length > 0) {
-        for (let matchable of this.matchables.slice().reverse()) {
-          let from = matchable.matchLeft(stat, to, module);
+        for (const matchable of this.matchables.slice().reverse()) {
+          const from = matchable.matchLeft(stat, to, module);
           if (from >= 0) {
             return from;
           }
@@ -68,8 +68,8 @@ export class Disjunction extends Matchable {
   }
 
   public findUnknownIdentifier(module: Module): Identifier | undefined {
-    for (let matchable of this.matchables) {
-      let identifier = matchable.findUnknownIdentifier(module);
+    for (const matchable of this.matchables) {
+      const identifier = matchable.findUnknownIdentifier(module);
       if (identifier !== undefined) {
         return identifier;
       }
@@ -78,8 +78,8 @@ export class Disjunction extends Matchable {
   }
 
   public findCircularIdentifier(identifiers: Array<Identifier>, module: Module): Identifier | undefined {
-    for (let matchable of this.matchables) {
-      let identifier = matchable.findCircularIdentifier(identifiers, module);
+    for (const matchable of this.matchables) {
+      const identifier = matchable.findCircularIdentifier(identifiers, module);
       if (identifier !== undefined) {
         return identifier;
       }

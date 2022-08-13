@@ -22,7 +22,7 @@ export class Definition {
   }
 
   public findCircularIdentifier(identifiers: Array<Identifier>, module: Module): Identifier | undefined {
-    let nextIdentifiers = [...identifiers, this.identifier];
+    const nextIdentifiers = [...identifiers, this.identifier];
     return this.content.findCircularIdentifier(nextIdentifiers, module);
   }
 

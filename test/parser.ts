@@ -17,11 +17,11 @@ import {
 } from "../source/parser/parser";
 
 
-let parser = new AkrantiainParser();
+const parser = new AkrantiainParser();
 
 describe("akrantiain", () => {
   test("simple", () => {
-    let result = parser.root.tryParse(`
+    const result = parser.root.tryParse(`
       vowel = "a" | "e" | "i" | "o" | "u";
       vowel -> /@/;
     `.trim());
@@ -31,7 +31,7 @@ describe("akrantiain", () => {
     expect(result.implicitModule.rules.length).toBe(1);
   });
   test("complex", () => {
-    let result = parser.root.tryParse(`
+    const result = parser.root.tryParse(`
       % foo => bar {
         def = "a" | "b" "c" | "d";
         foo = def def | def ("hoge" "fuga" | "piyo") | "mofu"
@@ -55,14 +55,14 @@ describe("akrantiain", () => {
 
 describe("definition", () => {
   test("simple", () => {
-    let result = parser.definition.tryParse(`identifier = "foo" | "bar" | "baz" "two" "three";`);
+    const result = parser.definition.tryParse(`identifier = "foo" | "bar" | "baz" "two" "three";`);
     expect(result).toBeInstanceOf(Definition);
   });
 });
 
 describe("rule", () => {
   test("simple 1", () => {
-    let result = parser.rule.tryParse(`"u" "g" !vowel -> /u/ /w/;`);
+    const result = parser.rule.tryParse(`"u" "g" !vowel -> /u/ /w/;`);
     expect(result).toBeInstanceOf(Rule);
     expect(result.selections.length).toBe(2);
     expect(result.phonemes.length).toBe(2);
@@ -70,38 +70,38 @@ describe("rule", () => {
     expect(result.phonemes[1].text).toBe("w");
   });
   test("simple 2", () => {
-    let result = parser.rule.tryParse(`"n" ^ ("m"|"p") -> /m/ $;`);
+    const result = parser.rule.tryParse(`"n" ^ ("m"|"p") -> /m/ $;`);
     expect(result).toBeInstanceOf(Rule);
   });
   test("complex", () => {
-    let result = parser.rule.tryParse(`!left some ^ ("com" pl | "ex") exam "ple" ^ !("r" | "i" "\\"g\\""| ht) -> /m/ $ /\\/5\\// $;`);
+    const result = parser.rule.tryParse(`!left some ^ ("com" pl | "ex") exam "ple" ^ !("r" | "i" "\\"g\\""| ht) -> /m/ $ /\\/5\\// $;`);
     expect(result).toBeInstanceOf(Rule);
   });
   test("normalize simple 1", () => {
-    let result = parser.rule.tryParse(`"a" "b" "c" "d" "e" "f" -> $ $ /c/ /d/ /e/ $;`);
+    const result = parser.rule.tryParse(`"a" "b" "c" "d" "e" "f" -> $ $ /c/ /d/ /e/ $;`);
     expect(result.toString()).toBe(`["a" "b"] "c" "d" "e" ["f"] -> /c/ /d/ /e/;`);
   });
   test("normalize simple 2", () => {
-    let result = parser.rule.tryParse(`a "b" "c" -> $ $ /c/;`);
+    const result = parser.rule.tryParse(`a "b" "c" -> $ $ /c/;`);
     expect(result.toString()).toBe(`[a "b"] "c" -> /c/;`);
   });
   test("normalize simple 3", () => {
-    let result = parser.rule.tryParse(`a "b" "c" -> /a/ /b/ $;`);
+    const result = parser.rule.tryParse(`a "b" "c" -> /a/ /b/ $;`);
     expect(result.toString()).toBe(`a "b" ["c"] -> /a/ /b/;`);
   });
   test("normalize circumplex", () => {
-    let result = parser.rule.tryParse(`"a" ^ ^ "b" ^ "c" ^ "d" ^ "e" "f" ^ "g" -> $ $ /c/ /d/ $ $ $;`);
+    const result = parser.rule.tryParse(`"a" ^ ^ "b" ^ "c" ^ "d" ^ "e" "f" ^ "g" -> $ $ /c/ /d/ $ $ $;`);
     expect(result.toString()).toBe(`["a" ^ ^ "b" ^] "c" ^ "d" [^ "e" "f" ^ "g"] -> /c/ /d/;`);
   });
   test("normalize complex", () => {
-    let result = parser.rule.tryParse(`!"l" "a" ^ ^ "b" ^ "c" ^ "d" ^ "e" "f" ^ "g" !"r" -> $ $ /c/ /d/ $ $ $;`);
+    const result = parser.rule.tryParse(`!"l" "a" ^ ^ "b" ^ "c" ^ "d" ^ "e" "f" ^ "g" !"r" -> $ $ /c/ /d/ $ $ $;`);
     expect(result.toString()).toBe(`[!("l") "a" ^ ^ "b" ^] "c" ^ "d" [^ "e" "f" ^ "g" !("r")] -> /c/ /d/;`);
   });
 });
 
 describe("disjunction", () => {
   test("simple 1", () => {
-    let result = parser.disjunction.tryParse(`"foo" | "bar" | "baz" | literal`);
+    const result = parser.disjunction.tryParse(`"foo" | "bar" | "baz" | literal`);
     expect(result).toBeInstanceOf(Disjunction);
     expect(result.matchables.length).toBe(4);
     expect(result.matchables[0]).toBeInstanceOf(Sequence);
@@ -112,7 +112,7 @@ describe("disjunction", () => {
     expect(result.matchables[3].matchables[0]).toBeInstanceOf(Identifier);
   });
   test("simple 2", () => {
-    let result = parser.disjunction.tryParse(`"foo" "bar" ^ literal | "baz" ^ some some`);
+    const result = parser.disjunction.tryParse(`"foo" "bar" ^ literal | "baz" ^ some some`);
     expect(result).toBeInstanceOf(Disjunction);
     expect(result.matchables.length).toBe(2);
     expect(result.matchables[0]).toBeInstanceOf(Sequence);
@@ -120,21 +120,21 @@ describe("disjunction", () => {
     expect(result.matchables[0].matchables[2]).toBeInstanceOf(Circumflex);
   });
   test("complex", () => {
-    let result = parser.disjunction.tryParse(`"string" (nest | nest ^ (nest) (nest | nest)) (nest nest) | "right"`);
+    const result = parser.disjunction.tryParse(`"string" (nest | nest ^ (nest) (nest | nest)) (nest nest) | "right"`);
     expect(result).toBeInstanceOf(Disjunction);
   });
 });
 
 describe("module chain", () => {
   test("simple", () => {
-    let result = parser.moduleChain.tryParse(`%% A >> B >> C;`);
+    const result = parser.moduleChain.tryParse(`%% A >> B >> C;`);
     expect(result).toBeInstanceOf(ModuleChain);
     expect(result.names.length).toBe(3);
     expect(result.names[1].text).toBe("B");
     expect(result.names[2].text).toBe("C");
   });
   test("complex", () => {
-    let result = parser.moduleChain.tryParse(`%% A >> (foo => bar => baz) >> B >> no => paren => no => paren >> C >> D;`);
+    const result = parser.moduleChain.tryParse(`%% A >> (foo => bar => baz) >> B >> no => paren => no => paren >> C >> D;`);
     expect(result).toBeInstanceOf(ModuleChain);
     expect(result.names.length).toBe(9);
   });

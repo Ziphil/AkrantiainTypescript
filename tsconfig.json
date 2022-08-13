@@ -12,7 +12,8 @@
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
-    "removeComments": true
+    "removeComments": true,
+    "useUnknownInCatchVariables": false
   },
   "include": [
     "source/**/*",

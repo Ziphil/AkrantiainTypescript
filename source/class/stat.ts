@@ -21,12 +21,12 @@ export class Stat {
     if (module.hasEnvironment("USE_NFD")) {
       input = input.normalize("NFD");
     }
-    let elements = [];
+    const elements = [];
     for (let i = 0 ; i < input.length ; i ++) {
-      let element = new StatElement(input[i], null, i + 1);
+      const element = new StatElement(input[i], null, i + 1);
       elements.push(element);
     }
-    let stat = new Stat(elements);
+    const stat = new Stat(elements);
     return stat;
   }
 
@@ -38,27 +38,27 @@ export class Stat {
     for (let i = from ; i < to ; i ++) {
       part += this.elements[i].part;
     }
-    let columnNumber = (from < this.elements.length) ? this.elements[from].columnNumber : this.elements[this.elements.length - 1].columnNumber;
-    let element = new StatElement(part, null, columnNumber);
+    const columnNumber = (from < this.elements.length) ? this.elements[from].columnNumber : this.elements[this.elements.length - 1].columnNumber;
+    const element = new StatElement(part, null, columnNumber);
     return element;
   }
 
   // インデックスが from から to まで (to は含まない) の要素を 1 文字ごとに分割した要素グループを返します。
   // 返される要素グループに含まれる全ての要素の result の値は、常に null になります。
   public divide(from: number, to: number): Stat {
-    let elements = [];
+    const elements = [];
     for (let i = from ; i < to ; i ++) {
       elements.push(...this.elements[i].divide());
     }
-    let stat = new Stat(elements);
+    const stat = new Stat(elements);
     return stat;
   }
 
   public plus(that: Stat): Stat {
-    let elements = [];
+    const elements = [];
     elements.push(...this.elements);
     elements.push(...that.elements);
-    let stat = new Stat(elements);
+    const stat = new Stat(elements);
     return stat;
   }
 
@@ -67,7 +67,7 @@ export class Stat {
   // したがって、このメソッドを実行する前に、全ての要素が正当であるかどうかを invalidElements メソッドなどで確認してください。
   public createOutput(module: Module): string {
     let output = "";
-    for (let element of this.elements) {
+    for (const element of this.elements) {
       if (element.result !== null) {
         output += element.result;
       } else {
@@ -85,8 +85,8 @@ export class Stat {
   }
 
   public getInvalidElements(module: Module): Array<StatElement> {
-    let invalidElements = [];
-    for (let element of this.elements) {
+    const invalidElements = [];
+    for (const element of this.elements) {
       if (!element.isValid(module)) {
         invalidElements.push(element);
       }

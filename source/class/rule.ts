@@ -32,10 +32,10 @@ export class Rule {
   }
 
   public apply(stat: Stat, module: Module): Stat {
-    let appliedGroup = new Stat([]);
+    const appliedGroup = new Stat([]);
     let pointer = 0;
     while (pointer <= stat.elements.length) {
-      let result = this.applyOnce(stat, pointer, module);
+      const result = this.applyOnce(stat, pointer, module);
       if (result !== null) {
         appliedGroup.elements.push(...result.addedElements);
         if (pointer < result.to) {
@@ -61,9 +61,9 @@ export class Rule {
   // そもそも規則にマッチせず適用できなかった場合は null を返します。
   private applyOnce(group: Stat, from: number, module: Module): RuleResult | null {
     if (this.testLeftCondition(group, from, module)) {
-      let result = this.applyOnceSelections(group, from, module);
+      const result = this.applyOnceSelections(group, from, module);
       if (result !== null) {
-        let to = result.to;
+        const to = result.to;
         if (this.testRightCondition(group, to, module)) {
           return result;
         } else {
@@ -78,17 +78,17 @@ export class Rule {
   }
 
   private applyOnceSelections(group: Stat, from: number, module: Module): RuleResult | null {
-    let addedElements = [];
+    const addedElements = [];
     let pointer = from;
     let phonemeIndex = 0;
-    for (let selection of this.selections) {
-      let to = selection.matchRight(group, pointer, module);
+    for (const selection of this.selections) {
+      const to = selection.matchRight(group, pointer, module);
       if (to >= 0) {
         if (selection.isConcrete()) {
-          let phoneme = this.phonemes[phonemeIndex];
+          const phoneme = this.phonemes[phonemeIndex];
           if (phoneme instanceof Quote || phoneme instanceof Slash) {
             if (group.isNoneConverted(pointer, to)) {
-              let addedElement = group.merge(pointer, to);
+              const addedElement = group.merge(pointer, to);
               addedElement.result = phoneme.text;
               addedElements.push(addedElement);
             } else {
@@ -117,8 +117,8 @@ export class Rule {
 
   private testLeftCondition(group: Stat, to: number, module: Module): boolean {
     if (this.leftCondition !== undefined) {
-      let leftStat = group.divide(0, to);
-      let rightStat = group.divide(to, group.elements.length);
+      const leftStat = group.divide(0, to);
+      const rightStat = group.divide(to, group.elements.length);
       return this.leftCondition.matchLeft(leftStat.plus(rightStat), leftStat.elements.length, module) >= 0;
     } else {
       return true;
@@ -127,8 +127,8 @@ export class Rule {
 
   private testRightCondition(group: Stat, from: number, module: Module): boolean {
     if (this.rightCondition !== undefined) {
-      let leftStat = group.divide(0, from);
-      let rightStat = group.divide(from, group.elements.length);
+      const leftStat = group.divide(0, from);
+      const rightStat = group.divide(from, group.elements.length);
       return this.rightCondition.matchRight(leftStat.plus(rightStat), leftStat.elements.length, module) >= 0;
     } else {
       return true;
@@ -137,8 +137,8 @@ export class Rule {
 
   private checkLength(): void {
     let concreteSelectionLength = 0;
-    let phonemeLength = this.phonemes.length;
-    for (let selection of this.selections) {
+    const phonemeLength = this.phonemes.length;
+    for (const selection of this.selections) {
       if (selection.isConcrete()) {
         concreteSelectionLength ++;
       }
@@ -152,7 +152,7 @@ export class Rule {
   // 現状では、右辺に「$」以外の文字列リテラルが 1 つ以上含まれているときに、何らかの変換が行われ得ると見なされます。
   private checkConcrete(): void {
     let concrete = false;
-    for (let phoneme of this.phonemes) {
+    for (const phoneme of this.phonemes) {
       if (!(phoneme instanceof Dollar)) {
         concrete = true;
       }
@@ -168,14 +168,14 @@ export class Rule {
     let leftIndex = 0;
     let rightIndex = this.phonemes.length;
     for (let i = 0 ; i < this.phonemes.length ; i ++) {
-      let phoneme = this.phonemes[i];
+      const phoneme = this.phonemes[i];
       if (!(phoneme instanceof Dollar)) {
         leftIndex = i;
         break;
       }
     }
     for (let i = this.phonemes.length - 1 ; i >= 0 ; i --) {
-      let phoneme = this.phonemes[i];
+      const phoneme = this.phonemes[i];
       if (!(phoneme instanceof Dollar)) {
         rightIndex = i + 1;
         break;
@@ -186,7 +186,7 @@ export class Rule {
     let leftConcreteCount = 0;
     let rightConcreteCount = 0;
     for (let i = 0 ; i < this.selections.length ; i ++) {
-      let selection = this.selections[i];
+      const selection = this.selections[i];
       if (selection.isConcrete()) {
         leftConcreteCount ++;
       }
@@ -196,7 +196,7 @@ export class Rule {
       }
     }
     for (let i = this.selections.length - 1 ; i >= 0 ; i --) {
-      let selection = this.selections[i];
+      const selection = this.selections[i];
       if (selection.isConcrete()) {
         rightConcreteCount ++;
       }
@@ -205,8 +205,8 @@ export class Rule {
         break;
       }
     }
-    let nextSelections = this.selections.slice(leftSelectionIndex, rightSelectionIndex);
-    let nextLeftCondition = (() => {
+    const nextSelections = this.selections.slice(leftSelectionIndex, rightSelectionIndex);
+    const nextLeftCondition = (() => {
       if (this.leftCondition !== undefined) {
         return new Sequence([this.leftCondition, ...this.selections.slice(0, leftSelectionIndex)]);
       } else {
@@ -217,7 +217,7 @@ export class Rule {
         }
       }
     })();
-    let nextRightCondition = (() => {
+    const nextRightCondition = (() => {
       if (this.rightCondition !== undefined) {
         return new Sequence([...this.selections.slice(rightSelectionIndex, this.selections.length), this.rightCondition]);
       } else {
@@ -228,8 +228,8 @@ export class Rule {
         }
       }
     })();
-    let nextPhonemes = this.phonemes.slice(leftIndex, rightIndex);
-    let anyThis = this as any;
+    const nextPhonemes = this.phonemes.slice(leftIndex, rightIndex);
+    const anyThis = this as any;
     anyThis.selections = nextSelections;
     anyThis.leftCondition = nextLeftCondition;
     anyThis.rightCondition = nextRightCondition;
@@ -237,20 +237,20 @@ export class Rule {
   }
 
   public findUnknownIdentifier(module: Module): Identifier | undefined {
-    for (let selection of this.selections) {
-      let identifier = selection.findUnknownIdentifier(module);
+    for (const selection of this.selections) {
+      const identifier = selection.findUnknownIdentifier(module);
       if (identifier !== undefined) {
         return identifier;
       }
     }
     if (this.leftCondition !== undefined) {
-      let identifier = this.leftCondition.findUnknownIdentifier(module);
+      const identifier = this.leftCondition.findUnknownIdentifier(module);
       if (identifier !== undefined) {
         return identifier;
       }
     }
     if (this.rightCondition !== undefined) {
-      let identifier = this.rightCondition.findUnknownIdentifier(module);
+      const identifier = this.rightCondition.findUnknownIdentifier(module);
       if (identifier !== undefined) {
         return identifier;
       }

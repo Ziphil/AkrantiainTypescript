@@ -17,8 +17,8 @@ export class Akrantiain {
 
   public constructor(modules: Array<Module>) {
     let implicitModule;
-    let explicitModules = [];
-    for (let module of modules) {
+    const explicitModules = [];
+    for (const module of modules) {
       if (!module.isEmpty()) {
         if (module.name === null) {
           if (implicitModule === undefined) {
@@ -27,7 +27,7 @@ export class Akrantiain {
             throw new AkrantiainError(1003, -1, "There are more than one implicit modules");
           }
         } else {
-          let duplicated = explicitModules.findIndex((existingModule) => existingModule.name!.equals(module.name!)) >= 0;
+          const duplicated = explicitModules.findIndex((existingModule) => existingModule.name!.equals(module.name!)) >= 0;
           if (!duplicated) {
             explicitModules.push(module);
           } else {
@@ -46,8 +46,8 @@ export class Akrantiain {
   }
 
   public static load(source: string): Akrantiain {
-    let parser = new AkrantiainParser();
-    let akrantiain = parser.tryParse(source);
+    const parser = new AkrantiainParser();
+    const akrantiain = parser.tryParse(source);
     return akrantiain;
   }
 
@@ -62,9 +62,9 @@ export class Akrantiain {
 
   // モジュールチェーン文で存在しないモジュールを参照していないかチェックします。
   private checkUnknownModuleName(): void {
-    let modules = [...this.explicitModules, this.implicitModule];
-    for (let module of modules) {
-      let name = module.findUnknownModuleName(this);
+    const modules = [...this.explicitModules, this.implicitModule];
+    for (const module of modules) {
+      const name = module.findUnknownModuleName(this);
       if (name !== undefined) {
         throw new AkrantiainError(1000, 1111, `No such module: '${name}'`);
       }
@@ -74,14 +74,14 @@ export class Akrantiain {
   // モジュールチェーン文でモジュールが循環参照していないかチェックします。
   // このメソッドは暗黙モジュールから参照されているもののみを調べるので、参照されていない明示モジュールの中での循環参照は検査しません。
   private checkCircularModuleName(): void {
-    let name = this.implicitModule.findCircularModuleName([], this);
+    const name = this.implicitModule.findCircularModuleName([], this);
     if (name !== undefined) {
       throw new AkrantiainError(1001, 1112, `Circular reference involving module: '${name}'`);
     }
   }
 
   public findModule(name: ModuleName): Module | undefined {
-    for (let module of this.explicitModules) {
+    for (const module of this.explicitModules) {
       if (module.name !== null && module.name.equals(name)) {
         return module;
       }
@@ -94,7 +94,7 @@ export class Akrantiain {
     if (this.implicitModule !== undefined) {
       string += this.implicitModule.toString(indent);
     }
-    for (let module of this.explicitModules) {
+    for (const module of this.explicitModules) {
       string += module.toString(indent);
     }
     return string;

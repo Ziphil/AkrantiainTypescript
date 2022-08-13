@@ -3,7 +3,9 @@
 import {
   Module
 } from ".";
-import { Stat } from "./stat";
+import {
+  Stat
+} from "./stat";
 
 
 export class StatElement {
@@ -19,9 +21,9 @@ export class StatElement {
   }
 
   public divide(): Array<StatElement> {
-    let elements = [];
-    for (let char of this.part) {
-      let element = new StatElement(char, null);
+    const elements = [];
+    for (const char of this.part) {
+      const element = new StatElement(char, null);
       elements.push(element);
     }
     return elements;
@@ -34,7 +36,7 @@ export class StatElement {
       if (this.part.match(/^\s*$/)) {
         return true;
       } else {
-        let stat = new Stat([this]);
+        const stat = new Stat([this]);
         if (module.findPunctuationContent().matchRight(stat, 0, module) >= 0) {
           return true;
         } else {
