@@ -169,9 +169,9 @@ export class AkrantiainParser {
     return parser;
   });
 
-  // モジュールチェイン素をパースします。
-  // パースした結果は、推移型モジュールを 1 つずつに分解したモジュール名の配列になります。
-  // 例えば、「A => B => C => D」という文字列は、「A => B」と「B => C」と「C => D」の 3 つのモジュール名からなる配列にパースされます。
+  /** モジュールチェイン素をパースします。
+   * パースした結果は、推移型モジュールを 1 つずつに分解したモジュール名の配列になります。
+   * 例えば、「A => B => C => D」という文字列は、「A => B」と「B => C」と「C => D」の 3 つのモジュール名からなる配列にパースされます。*/
   private moduleChainElement: Parser<Array<ModuleName>> = lazy(() => {
     const parser = this.identifierText.sepBy1(Parsimmon.string("=>").trim(this.blank)).map((texts) => {
       if (texts.length === 1) {
@@ -287,7 +287,7 @@ export class AkrantiainParser {
     return parser;
   });
 
-  // 文末の (省略されているかもしれない) セミコロンおよびその後の改行を含むスペースをパースします。
+  /** 文末の (省略されているかもしれない) セミコロンおよびその後の改行を含むスペースをパースします。*/
   private semicolon: Parser<null> = lazy(() => {
     const semicolonParser = seq(Parsimmon.string(";"), this.blankOrBreak);
     const breakParser = seq(this.break, this.blankOrBreak);

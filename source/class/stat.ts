@@ -30,9 +30,9 @@ export class Stat {
     return stat;
   }
 
-  // インデックスが from から to まで (to は含まない) の要素を 1 つに合成した要素を返します。
-  // 返される要素の part の値は、合成前の part をインデックス順に繋げたものになります。
-  // 返される要素の result の値は、合成前の各要素の result の値に関わらず null になります。
+  /** インデックスが `from` から `to` まで (`to` は含まない) の要素を 1 つに合成した要素を返します。
+   * 返される要素の `part` の値は、合成前の `part` をインデックス順に繋げたものになります。
+   * 返される要素の `result` の値は、合成前の各要素の `result` の値に関わらず `null` になります。*/
   public merge(from: number, to: number): StatElement {
     let part = "";
     for (let i = from ; i < to ; i ++) {
@@ -43,8 +43,8 @@ export class Stat {
     return element;
   }
 
-  // インデックスが from から to まで (to は含まない) の要素を 1 文字ごとに分割した要素グループを返します。
-  // 返される要素グループに含まれる全ての要素の result の値は、常に null になります。
+  /** インデックスが `from` から `to` まで (`to` は含まない) の要素を 1 文字ごとに分割した要素グループを返します。
+   * 返される要素グループに含まれる全ての要素の `result` の値は、常に `null` になります。*/
   public divide(from: number, to: number): Stat {
     const elements = [];
     for (let i = from ; i < to ; i ++) {
@@ -62,9 +62,9 @@ export class Stat {
     return stat;
   }
 
-  // 各要素の変換後の文字列を連結し、出力文字列を作成します。
-  // 変換がなされていない要素が含まれていた場合は、句読点類であればスペース 1 つを連結し、そうでなければ変換前の文字列を連結します。
-  // したがって、このメソッドを実行する前に、全ての要素が正当であるかどうかを invalidElements メソッドなどで確認してください。
+  /** 各要素の変換後の文字列を連結し、出力文字列を作成します。
+   * 変換がなされていない要素が含まれていた場合は、句読点類であればスペース 1 つを連結し、そうでなければ変換前の文字列を連結します。
+   * したがって、このメソッドを実行する前に、全ての要素が正当であるかどうかを `invalidElements` メソッドなどで確認してください。*/
   public createOutput(module: Module): string {
     let output = "";
     for (const element of this.elements) {

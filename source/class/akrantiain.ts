@@ -51,7 +51,7 @@ export class Akrantiain {
     return akrantiain;
   }
 
-  // 暗黙モジュールから与えられた文字列の変換を実行します。
+  /** 暗黙モジュールから与えられた文字列の変換を実行します。*/
   public convert(input: string): string {
     if (this.implicitModule !== undefined) {
       return this.implicitModule.convert(input, this);
@@ -60,7 +60,7 @@ export class Akrantiain {
     }
   }
 
-  // モジュールチェーン文で存在しないモジュールを参照していないかチェックします。
+  /** モジュールチェーン文で存在しないモジュールを参照していないかチェックします。*/
   private checkUnknownModuleName(): void {
     const modules = [...this.explicitModules, this.implicitModule];
     for (const module of modules) {
@@ -71,8 +71,8 @@ export class Akrantiain {
     }
   }
 
-  // モジュールチェーン文でモジュールが循環参照していないかチェックします。
-  // このメソッドは暗黙モジュールから参照されているもののみを調べるので、参照されていない明示モジュールの中での循環参照は検査しません。
+  /** モジュールチェーン文でモジュールが循環参照していないかチェックします。
+   * このメソッドは暗黙モジュールから参照されているもののみを調べるので、参照されていない明示モジュールの中での循環参照は検査しません。*/
   private checkCircularModuleName(): void {
     const name = this.implicitModule.findCircularModuleName([], this);
     if (name !== undefined) {

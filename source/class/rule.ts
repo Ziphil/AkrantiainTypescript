@@ -56,9 +56,9 @@ export class Rule {
     return appliedGroup;
   }
 
-  // ちょうど from で与えられた位置から規則を適用します。
-  // 規則がマッチして適用できた場合は、変化後の要素のリストとマッチした範囲の右側のインデックス (範囲にそのインデックス自体は含まない) を返します。
-  // そもそも規則にマッチせず適用できなかった場合は null を返します。
+  /** ちょうど `from` で与えられた位置から規則を適用します。
+   * 規則がマッチして適用できた場合は、変化後の要素のリストとマッチした範囲の右側のインデックス (範囲にそのインデックス自体は含まない) を返します。
+   * そもそも規則にマッチせず適用できなかった場合は `null` を返します。*/
   private applyOnce(group: Stat, from: number, module: Module): RuleResult | null {
     if (this.testLeftCondition(group, from, module)) {
       const result = this.applyOnceSelections(group, from, module);
@@ -148,8 +148,8 @@ export class Rule {
     }
   }
 
-  // この規則によって何らかの変換が行われ得るかどうかをチェックします。
-  // 現状では、右辺に「$」以外の文字列リテラルが 1 つ以上含まれているときに、何らかの変換が行われ得ると見なされます。
+  /** この規則によって何らかの変換が行われ得るかどうかをチェックします。
+   * 現状では、右辺に「$」以外の文字列リテラルが 1 つ以上含まれているときに、何らかの変換が行われ得ると見なされます。*/
   private checkConcrete(): void {
     let concrete = false;
     for (const phoneme of this.phonemes) {
@@ -162,8 +162,8 @@ export class Rule {
     }
   }
 
-  // 先頭もしくは末尾から連続して変換先が「$」になっている部分を condtion に移動させます。
-  // condition のチェックでは Stat の状態に関わらず入力を 1 文字ずつ走査するので、これによりいわゆる aimez バグに対処できます。
+  /** 先頭もしくは末尾から連続して変換先が「$」になっている部分を `condtion` に移動させます。
+   * `condition` のチェックでは Stat の状態に関わらず入力を 1 文字ずつ走査するので、これによりいわゆる aimez バグに対処できます。*/
   private normalize(): void {
     let leftIndex = 0;
     let rightIndex = this.phonemes.length;

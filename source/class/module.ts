@@ -72,7 +72,7 @@ export class Module {
     this.checkCircularIdentifier();
   }
 
-  // 与えられた文字列の変換を実行します。
+  /** 与えられた文字列の変換を実行します。*/
   public convert(input: string, akrantiain: Akrantiain): string {
     let currentOutput = input;
     currentOutput = this.convertByRule(currentOutput, akrantiain);
@@ -112,7 +112,7 @@ export class Module {
     return currentOutput;
   }
 
-  // 識別子定義文や変換規則定義文でモジュール内に存在しない識別子を参照していないかチェックします。
+  /** 識別子定義文や変換規則定義文でモジュール内に存在しない識別子を参照していないかチェックします。*/
   private checkUnknownIdentifier(): void {
     for (const definition of this.definitions) {
       const identifier = definition.findUnknownIdentifier(this);
@@ -128,7 +128,7 @@ export class Module {
     }
   }
 
-  // 識別子定義文で識別子が循環参照していないかチェックします。
+  /** 識別子定義文で識別子が循環参照していないかチェックします。*/
   private checkCircularIdentifier(): void {
     for (const definition of this.definitions) {
       const identifier = definition.findCircularIdentifier([], this);
@@ -138,7 +138,7 @@ export class Module {
     }
   }
 
-  // 存在しないモジュール名を含んでいればそれを返し、そうでなければ undefined を返します。
+  /** 存在しないモジュール名を含んでいればそれを返し、そうでなければ `undefined` を返します。*/
   public findUnknownModuleName(akrantiain: Akrantiain): ModuleName | undefined {
     if (this.moduleChain !== undefined) {
       for (const name of this.moduleChain.names) {
@@ -152,9 +152,9 @@ export class Module {
     }
   }
 
-  // モジュールチェーン文を全て展開したときに names に含まれるモジュール名が含まれていればそれを返し、そうでなければ undefined を返します。
-  // モジュールチェーンが循環参照していないかを調べるのに用いられます。
-  // なお、モジュールチェーン文で用いられているモジュールが存在することを仮定して動作するので、findUnknownModuleName メソッドを呼び出してから実行してください。
+  /** モジュールチェーン文を全て展開したときに `names` に含まれるモジュール名が含まれていればそれを返し、そうでなければ `undefined` を返します。
+   * モジュールチェーンが循環参照していないかを調べるのに用いられます。
+   * なお、モジュールチェーン文で用いられているモジュールが存在することを仮定して動作するので、`findUnknownModuleName` メソッドを呼び出してから実行してください。*/
   public findCircularModuleName(names: Array<ModuleName>, akrantiain: Akrantiain): ModuleName | undefined {
     if (this.moduleChain !== undefined) {
       const name = names.find((name) => this.name === null || name.equals(this.name));

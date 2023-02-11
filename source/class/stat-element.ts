@@ -29,8 +29,8 @@ export class StatElement {
     return elements;
   }
 
-  // この要素が正当に変換されていれば true を返し、そうでなければ false を返します。
-  // ここで「正当に変換されている」とは、変換後の文字列が null でないか、変換前の文字列が句読点かスペースのみで構成されていることを意味します。
+  /** この要素が正当に変換されていれば `true` を返し、そうでなければ `false` を返します。
+   * ここで「正当に変換されている」とは、変換後の文字列が `null` でないか、変換前の文字列が句読点かスペースのみで構成されていることを意味します。*/
   public isValid(module: Module): boolean {
     if (this.result === null) {
       if (this.part.match(/^\s*$/)) {
