@@ -1,13 +1,7 @@
 //
 
-import {
-  AkrantiainError,
-  Module,
-  Stat
-} from ".";
-import {
-  Matchable
-} from "./matchable";
+import {AkrantiainError, Module, Stat} from ".";
+import {Matchable} from "./matchable";
 
 
 export class Identifier extends Matchable {

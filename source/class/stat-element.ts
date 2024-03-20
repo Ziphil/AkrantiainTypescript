@@ -1,11 +1,7 @@
 //
 
-import {
-  Module
-} from ".";
-import {
-  Stat
-} from "./stat";
+import {Module} from ".";
+import {Stat} from "./stat";
 
 
 export class StatElement {

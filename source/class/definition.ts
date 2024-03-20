@@ -1,10 +1,6 @@
 //
 
-import {
-  Identifier,
-  Matchable,
-  Module
-} from ".";
+import {Identifier, Matchable, Module} from ".";
 
 
 export class Definition {

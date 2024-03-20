@@ -1,13 +1,7 @@
 //
 
-import {
-  Identifier,
-  Module,
-  Stat
-} from ".";
-import {
-  Matchable
-} from "./matchable";
+import {Identifier, Module, Stat} from ".";
+import {Matchable} from "./matchable";
 
 
 export class Sequence extends Matchable {

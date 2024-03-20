@@ -1,12 +1,7 @@
 //
 
 import Parsimmon from "parsimmon";
-import {
-  Parser,
-  alt,
-  lazy,
-  seq
-} from "parsimmon";
+import {Parser, alt, lazy, seq} from "parsimmon";
 import {
   Akrantiain,
   Circumflex,
@@ -27,9 +22,7 @@ import {
   Sequence,
   Slash
 } from "../class";
-import {
-  attempt
-} from "./util";
+import {attempt} from "./util";
 
 
 export class AkrantiainParser {

@@ -12,9 +12,7 @@ import {
   Sequence,
   Slash
 } from "../source/class";
-import {
-  AkrantiainParser
-} from "../source/parser/parser";
+import {AkrantiainParser} from "../source/parser/parser";
 
 
 const parser = new AkrantiainParser();

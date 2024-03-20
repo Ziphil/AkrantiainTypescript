@@ -1,10 +1,6 @@
 //
 
-import {
-  Identifier,
-  Module,
-  Stat
-} from ".";
+import {Identifier, Module, Stat} from ".";
 
 
 export abstract class Matchable {

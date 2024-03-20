@@ -1,8 +1,6 @@
 //
 
-import {
-  ModuleName
-} from ".";
+import {ModuleName} from ".";
 
 
 export class ModuleChain {

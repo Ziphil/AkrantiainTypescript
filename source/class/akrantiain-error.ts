@@ -1,8 +1,6 @@
 //
 
-import {
-  StatElement
-} from ".";
+import {StatElement} from ".";
 
 
 export class AkrantiainError extends Error {

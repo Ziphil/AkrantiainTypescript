@@ -1,8 +1,6 @@
 //
 
-import {
-  Akrantiain
-} from "../source/class";
+import {Akrantiain} from "../source/class";
 
 
 describe("normal", () => {

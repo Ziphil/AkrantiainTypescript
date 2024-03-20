@@ -1,13 +1,7 @@
 //
 
-import {
-  AkrantiainError,
-  Module,
-  ModuleName
-} from ".";
-import {
-  AkrantiainParser
-} from "../parser/parser";
+import {AkrantiainError, Module, ModuleName} from ".";
+import {AkrantiainParser} from "../parser/parser";
 
 
 export class Akrantiain {

@@ -1,8 +1,6 @@
 //
 
-import {
-  AkrantiainError
-} from ".";
+import {AkrantiainError} from ".";
 
 
 export class Environment {
